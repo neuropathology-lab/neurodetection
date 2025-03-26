@@ -7,6 +7,7 @@ Created on Mon Nov 25 10:35:23 2024
 from main import main
 import os
 
+
 # Before running the script, create a start folder with a subfolder named 'photos_raw' where you store photos for processing.
 # Results will be saved in the same folder in a subfolder named 'results'.
 # Obtained annotations, info, and processed photos are saved in three separate subfolders within.

@@ -12,15 +12,19 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from src.load_model import load_is_neuron
 from src.detections_processing import get_objects_edges, get_too_close_objects
-from src.process_image import process_image, separate_hematoxylin
+from src.process_image import process_image, separate_hematoxylin, prepare_image_GUI
 from src.overhead import convert_img_to_neurons
 from src.load_image import load_image
+from src.GUI import ImageGUI
 import gc
 import datetime
+import tkinter as tk
+import os
+
 
 def main(input_dir, out_dir, model_isneuron_name, img_ext, pixel_um,
          edge_threshold, closeness_threshold, plot_classification=False, use_hematoxylin=False):
-    
+
     # Create paths and make sure they exist
     print("Started processing photos from " + input_dir)
     input_dir = Path(input_dir)
@@ -43,8 +47,11 @@ def main(input_dir, out_dir, model_isneuron_name, img_ext, pixel_um,
     img_info_list = []
     now = datetime.datetime.now()
 
+    counter = 1
     # Process each photo in the input directory    
     for img_path in input_dir.glob("*" + img_ext):
+        ## img_path = Path("D:/Klara_PHD/database/test_neuron_detection/photos_raw/UL8_13_ah_3.tif")
+
         # Set up file-specific paths and names
         file_name = img_path.stem
         img_info_list = []
@@ -54,7 +61,38 @@ def main(input_dir, out_dir, model_isneuron_name, img_ext, pixel_um,
         
         # Process image
         img = process_image(img, img_ext)
-        
+
+        if counter == 1:
+            img1 = img
+            img2 = img
+            ##img1 = cv2.imread("example_photo.png")
+
+            if img1 is None or img2 is None:
+                raise FileNotFoundError("One or both image files are missing.")
+
+            # Prepare a version for GUI (but preserve the original)
+            img1 = prepare_image_GUI(img1)
+            img2 = prepare_image_GUI(img2)
+
+            img2_resized = None  # Will be set after GUI
+
+            def after_gui(mean_area, resized_image):
+                global img2_resized
+                img2_resized = resized_image
+                print(f"Mean relative square area (from GUI): {mean_area:.6f}")
+                print("Annotated right image saved to:", os.path.join(out_dir, "annotated_right_image.png"))
+
+            root = tk.Tk()
+            app = ImageGUI(
+                root=root,
+                img1=img1,
+                img2_gui=img2,
+                img2_original=img,
+                on_done=after_gui,
+                out_dir=out_dir
+            )
+            root.mainloop()
+        img = img2_resized
         # Get only hematoxylin channel if indicated and detect neurons
         if use_hematoxylin:
             # Get only hematoxylin channel
@@ -139,6 +177,7 @@ def main(input_dir, out_dir, model_isneuron_name, img_ext, pixel_um,
         now = datetime.datetime.now()
         print(f"Processed and saved results for {file_name} [{now.strftime('%Y-%m-%d %H:%M:%S')}]")
 
+        counter = counter + 1
         del objects_df, neurons_df, img
         gc.collect()
         

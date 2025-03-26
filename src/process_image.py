@@ -54,3 +54,10 @@ def process_image(img, img_ext):
     
     return img
 
+def prepare_image_GUI(img):
+    if img.dtype == np.float32 or img.dtype == np.float64:
+        if img.max() <= 1.0:
+            img = (np.clip(img, 0, 1) * 255).astype(np.uint8)
+        else:
+            img = np.clip(img, 0, 255).astype(np.uint8)
+    return img
