@@ -3,6 +3,14 @@ from PIL import Image, ImageTk, ImageGrab
 import cv2
 import numpy as np
 import os
+import time
+
+# Windows DPI-awareness fix
+import ctypes
+try:
+    ctypes.windll.shcore.SetProcessDpiAwareness(1)  # system DPI aware
+except Exception:
+    pass
 
 def resize_img(img, max_width):
     h, w = img.shape[:2]
@@ -28,30 +36,40 @@ def prepare_image(img):
     return img
 
 def resize_original_based_on_mean_square(original_img, gui_display_shape, mean_rel_area):
-    """
-    Resize the original image so that the mean relative square area from the GUI
-    corresponds to a 100x100 pixel square in the resized image.
-    """
-    H_orig, W_orig = original_img.shape[:2]
-    H_gui, W_gui = gui_display_shape
-
     target_area = 100 * 100
+    H_orig, W_orig = original_img.shape[:2]
     scale_factor = (target_area / (mean_rel_area * W_orig * H_orig)) ** 0.5
-
-    new_w = int(W_orig * scale_factor)
-    new_h = int(H_orig * scale_factor)
+    new_w = int(round(W_orig * scale_factor))
+    new_h = int(round(H_orig * scale_factor))
     resized = cv2.resize(original_img, (new_w, new_h), interpolation=cv2.INTER_LINEAR)
-    return resized
+    return resized, scale_factor, (new_h, new_w)
+
+def grab_full_window_screenshot(window):
+    window.lift()
+    window.attributes('-topmost', True)
+    window.update()
+    time.sleep(0.2)  # Let the system render everything fully
+    window.attributes('-topmost', False)
+
+    # Get actual screen coordinates
+    x = window.winfo_rootx()
+    y = window.winfo_rooty()
+    width = window.winfo_width()
+    height = window.winfo_height()
+
+    # Final grab
+    screenshot = ImageGrab.grab(bbox=(x, y, x + width, y + height))
+    return screenshot
 
 class ImageGUI:
-    def __init__(self, root, img1, img2_gui, img2_original, on_done, out_dir, max_width=400):
+    def __init__(self, root, img1, img2_gui, img2_original, on_done, out_dir, max_width=800):
         self.root = root
         self.img2_original = img2_original
-        self.img2_gui_shape = img2_gui.shape[:2]  # (H, W)
+        self.img2_gui_shape = img2_gui.shape[:2]
         self.on_done = on_done
         self.out_dir = out_dir
         self.root.title("Neuron Size Annotation Tool")
-
+        self.root.state('zoomed')
         self.root.lift()
         self.root.attributes('-topmost', True)
         self.root.after(100, lambda: self.root.attributes('-topmost', False))
@@ -83,6 +101,7 @@ class ImageGUI:
         self.start_x = None
         self.start_y = None
         self.rect = None
+        self.rectangles = []
         self.square_sizes = []
 
         self.canvas2.bind("<Button-1>", self.on_click)
@@ -91,6 +110,13 @@ class ImageGUI:
 
         self.result_label = tk.Label(root, text="", font=("Helvetica", 12))
         self.result_label.pack()
+
+        self.button_frame = tk.Frame(root)
+        self.button_frame.pack(pady=10)
+        self.confirm_button = tk.Button(self.button_frame, text="✅ Confirm", command=self.confirm_selection, state=tk.DISABLED)
+        self.redo_button = tk.Button(self.button_frame, text="🔁 Redo", command=self.reset_selection, state=tk.DISABLED)
+        self.confirm_button.pack(side=tk.LEFT, padx=10)
+        self.redo_button.pack(side=tk.LEFT, padx=10)
 
     def on_click(self, event):
         self.start_x = event.x
@@ -115,36 +141,45 @@ class ImageGUI:
         area = width * height / (self.img2_w * self.img2_h)
         self.square_sizes.append(area)
 
-        # Draw permanent square
-        self.canvas2.create_rectangle(*coords, outline='red', width=2)
+        # Draw and store permanent square
+        final_rect = self.canvas2.create_rectangle(*coords, outline='red', width=2)
+        self.rectangles.append(final_rect)
+        self.canvas2.delete(self.rect)
+        self.rect = None
 
         if len(self.square_sizes) == 3:
-            mean_size = np.mean(self.square_sizes)
-            self.result_label.config(text=f"Mean relative square size: {mean_size:.4f}")
+            self.result_label.config(text=f"Mean relative square size: {np.mean(self.square_sizes):.4f}")
             self.canvas2.unbind("<Button-1>")
             self.canvas2.unbind("<B1-Motion>")
             self.canvas2.unbind("<ButtonRelease-1>")
-            self.root.after(1000, self.finish)
+            self.confirm_button.config(state=tk.NORMAL)
+            self.redo_button.config(state=tk.NORMAL)
 
-    def finish(self):
+    def reset_selection(self):
+        # Remove rectangles and reset
+        for r in self.rectangles:
+            self.canvas2.delete(r)
+        self.rectangles = []
+        self.square_sizes = []
+        self.result_label.config(text="")
+        self.confirm_button.config(state=tk.DISABLED)
+        self.redo_button.config(state=tk.DISABLED)
+        self.canvas2.bind("<Button-1>", self.on_click)
+        self.canvas2.bind("<B1-Motion>", self.on_drag)
+        self.canvas2.bind("<ButtonRelease-1>", self.on_release)
+
+
+
+    def confirm_selection(self):
         self.root.update()
 
-        # Screenshot the full canvas2 (right image with squares)
-        x = self.canvas2.winfo_rootx()
-        y = self.canvas2.winfo_rooty()
-        w = self.canvas2.winfo_width()
-        h = self.canvas2.winfo_height()
-        bbox = (x, y, x + w, y + h)
-        screenshot = ImageGrab.grab(bbox)
-        annotated_path = os.path.join(self.out_dir, "annotated_right_image.png")
-        screenshot.save(annotated_path)
+        screenshot = grab_full_window_screenshot(self.root)
+        screenshot.save(os.path.join(self.out_dir, "annotated_right_image.png"))
 
         mean_rel_area = np.mean(self.square_sizes)
-
-        # Resize original image based on mean area (but don't save)
-        self.img2_resized = resize_original_based_on_mean_square(
+        resized, scale_factor, target_shape = resize_original_based_on_mean_square(
             self.img2_original, self.img2_gui_shape, mean_rel_area
         )
 
         self.root.destroy()
-        self.on_done(mean_rel_area, self.img2_resized)
+        self.on_done(mean_rel_area, resized, scale_factor, target_shape)

@@ -19,11 +19,12 @@ from src.GUI import ImageGUI
 import gc
 import datetime
 import tkinter as tk
-import os
+import cv2
 
 
 def main(input_dir, out_dir, model_isneuron_name, img_ext, pixel_um,
-         edge_threshold, closeness_threshold, plot_classification=False, use_hematoxylin=False):
+         edge_threshold, closeness_threshold, plot_classification = True,
+         adjust_magnification = False, use_hematoxylin = False):
 
     # Create paths and make sure they exist
     print("Started processing photos from " + input_dir)
@@ -62,37 +63,50 @@ def main(input_dir, out_dir, model_isneuron_name, img_ext, pixel_um,
         # Process image
         img = process_image(img, img_ext)
 
-        if counter == 1:
-            img1 = img
-            img2 = img
-            ##img1 = cv2.imread("example_photo.png")
+        if adjust_magnification == True :
+            if counter == 1:
+                shared_data = {"img_resized": None}
 
-            if img1 is None or img2 is None:
-                raise FileNotFoundError("One or both image files are missing.")
+                img1 = img
+                img2 = img
+                ##img1 = cv2.imread("example_photo.png")
+                shared_data = {
+                    "img2_resized": None,
+                    "scale_factor": None,
+                    "target_shape": None,
+                }
 
-            # Prepare a version for GUI (but preserve the original)
-            img1 = prepare_image_GUI(img1)
-            img2 = prepare_image_GUI(img2)
+                if img1 is None or img2 is None:
+                    raise FileNotFoundError("One or both image files are missing.")
 
-            img2_resized = None  # Will be set after GUI
+                # Prepare a version for GUI (but preserve the original)
+                img1 = prepare_image_GUI(img1)
+                img2 = prepare_image_GUI(img2)
 
-            def after_gui(mean_area, resized_image):
-                global img2_resized
-                img2_resized = resized_image
-                print(f"Mean relative square area (from GUI): {mean_area:.6f}")
-                print("Annotated right image saved to:", os.path.join(out_dir, "annotated_right_image.png"))
+                img2_resized = None  # Will be set after GUI
 
-            root = tk.Tk()
-            app = ImageGUI(
-                root=root,
-                img1=img1,
-                img2_gui=img2,
-                img2_original=img,
-                on_done=after_gui,
-                out_dir=out_dir
-            )
-            root.mainloop()
-        img = img2_resized
+                def after_gui(mean_area, resized_image, scale_factor, target_shape):
+                    shared_data["img2_resized"] = resized_image
+                    shared_data["scale_factor"] = scale_factor
+                    shared_data["target_shape"] = target_shape
+
+                    print(f"User confirmed. Mean relative square area: {mean_area:.6f}")
+                    print("Saved full GUI screenshot to: output/annotated_right_image.png")
+
+                root = tk.Tk()
+                app = ImageGUI(
+                    root=root,
+                    img1=img1,
+                    img2_gui=img2,
+                    img2_original=img,
+                    on_done=after_gui,
+                    out_dir=out_dir
+                )
+                root.mainloop()
+                target_shape = shared_data["target_shape"]
+
+            img = cv2.resize(img, (target_shape[1], target_shape[0]), interpolation=cv2.INTER_LINEAR)
+
         # Get only hematoxylin channel if indicated and detect neurons
         if use_hematoxylin:
             # Get only hematoxylin channel
@@ -186,17 +200,18 @@ if __name__ == '__main__':
     parser.add_argument('input_dir', type=str, help="Path to the images")
     parser.add_argument('out_dir', type=str, help="Path for saving results")
     parser.add_argument('--plot_classification', action='store_true', default=False, help="Plot the results of the classification")
-    parser.add_argument('--use_hematoxylin', action='store_true', default=False, help="Use only hematoxylin channel for neuron detection")
+    parser.add_argument('--use_hematoxylin', action='store_true', default=True, help="Use only hematoxylin channel for neuron detection")
     parser.add_argument('--model_isneuron_name', type=str, default="learner_isneuron", help="Name of model for detecting neurons")
     parser.add_argument('--img_ext', type=str, default=".tif", help="Image extension (can be .czi or .tif)")
     parser.add_argument('--pixel_um', type=float, default=0.227, help="Size of pixel in um")
     parser.add_argument('--edge_threshold', type=float, default=0, help="Size of area from the edge where neurons will be discarded (in um)")
     parser.add_argument('--closeness_threshold', type=float, default=0, help="Size of radius that overlapping neurons will be discarded")
-    
+    parser.add_argument('--adjust_magnification', action='store_true', default=False, help="Adjust magnification of the photos")
+
     args = parser.parse_args()
     
     main(
         args.input_dir, args.out_dir, args.model_isneuron_name, args.img_ext,
         args.pixel_um, args.edge_threshold, args.closeness_threshold,
-        args.plot_classification, args.use_hematoxylin
+        args.plot_classification, args.use_hematoxylin, args.adjust_magnification
     )
