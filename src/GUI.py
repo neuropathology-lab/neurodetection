@@ -174,7 +174,7 @@ class ImageGUI:
         self.root.update()
 
         screenshot = grab_full_window_screenshot(self.root)
-        screenshot.save(os.path.join(self.out_dir, "annotated_right_image.png"))
+        screenshot.save(os.path.join(self.out_dir, "GUI_neuron_size_selection.png"))
 
         mean_rel_area = np.mean(self.square_sizes)
         resized, scale_factor, target_shape = resize_original_based_on_mean_square(

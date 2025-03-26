@@ -91,7 +91,7 @@ def main(input_dir, out_dir, model_isneuron_name, img_ext, pixel_um,
                     shared_data["target_shape"] = target_shape
 
                     print(f"User confirmed. Mean relative square area: {mean_area:.6f}")
-                    print("Saved full GUI screenshot to: output/annotated_right_image.png")
+                    print("Saved full GUI screenshot to: output_dir/GUI_neuron_size_selection.png")
 
                 root = tk.Tk()
                 app = ImageGUI(
