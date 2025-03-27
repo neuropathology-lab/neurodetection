@@ -1,14 +1,11 @@
-
 import numpy as np
 import pandas as pd
-from glob import glob
-from tqdm import tqdm
 from skimage import io
 from typing import List
 from pathlib import Path
 
-
 def cut_bboxes_from_center(df: pd.DataFrame, image: np.ndarray, labeled_image: np.ndarray, output_dir: str or Path = None, image_prefix: str = "", mask = True, remove_after = False) -> List:
+
     if image_prefix and not image_prefix.endswith("_"):
         image_prefix += "_"
     if not output_dir:
@@ -38,5 +35,3 @@ def cut_bboxes_from_center(df: pd.DataFrame, image: np.ndarray, labeled_image: n
                 labeled_bb[labeled_bb == tmp_label] = 0
         else:
             io.imsave(output_dir / f"{image_prefix}cell_{cell_name}_labelNegative.tif", bb, check_contrast=False)
-
-

@@ -7,8 +7,8 @@ Created on Fri Nov 29 13:16:55 2024
 from .process_image import convertCziToUsableArray, convertTifToUsableArray
 from aicspylibczi import CziFile
 
-
 def load_image(img_path, img_ext):
+
     if (img_ext != ".czi" and img_ext  != ".tif"):
         raise ValueError("Input image is not a czi or tif image")
 
