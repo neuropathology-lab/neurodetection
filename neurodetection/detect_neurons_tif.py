@@ -165,7 +165,7 @@ def detect_neurons_tif(input_dir, out_dir, pixel_size, use_hematoxylin = False,
             output_plot_path = out_dir_plots / f"{file_name}_plot.png"
             if (img_ext==".tif"):
                 img = img[ :, :, ::-1]
-            neuron_points_size = neuron_points_size / scaling_factor
+            neuron_points_size = neuron_points_size / scaling_factor**2
             three_plots_save(img, objects_df, neurons_df, output_plot_path, neuron_points_size)
 
         # Save centroids of detected neurons if requested

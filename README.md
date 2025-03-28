@@ -1,5 +1,9 @@
 # Neurodetection
-Detects neurons in immunohistochemically stained images. The script takes as input a folder containing microscopy images in RGB .tif format and returns information about the number of detected neurons, their positions, and a plot showing detected objects and neurons overlaid on the original images. Information on pixel size in micrometers is required to run this script.
+Detects neurons in immunohistochemically stained images. 
+
+The script takes as input a folder of microscopy images in RGB .tif format and outputs the number of detected neurons, their positions, and a plot with detected objects and neurons overlaid on the original images. To run the script, information about pixel size in micrometers is required.
+
+Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network, pre-trained on ImageNet and fine-tuned with 31,273 neuron and 91,528 non-neuron samples.
 
 ## Installation (for now)
 ```bash
@@ -18,10 +22,7 @@ detect_neurons_tif(input_dir, out_dir, pixel_size)
 ```
 ## Parameters detect_neurons_tif
 * **input_dir** – Path to the input directory containing the images (.tif) for analysis. (required)
-* **output_dir** – Path to the output directory where results will be saved. (required) This script generates three types of results, each stored in separate folders:
-** A CSV file with summary information about the analysis, including the number of detected objects and neurons.
-** CSV files with the centroids of detected neurons.
-** PNG plots: original images, images with detected objects, and images with detected neurons.
+* **output_dir** – Path to the output directory where results will be saved. (required) This script generates three types of results, each stored in separate folders: A CSV file with summary information about the analysis, including the number of detected objects and neurons. CSV files with the centroids of detected neurons. PNG plots: original images, images with detected objects, and images with detected neurons.
 * **pixel_size** – Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal. (required)
 * **plot_classification** – If set, saves plots of the original image, detected objects, and final classified neurons. (default: True)
 * **save_detections** – If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
@@ -29,7 +30,7 @@ detect_neurons_tif(input_dir, out_dir, pixel_size)
 * **model_name** – Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
 * **edge_threshold** – Minimum distance (in μm) from image edges. Detected neurons closer than this distance will be discarded. Set to 0 to disable. (default: 0)
 * **closeness_threshold** – Minimum separation distance (in μm) between detected objects. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 0)
-* **neuron_points_size** – Size of the scatter plot markers used to display detected neurons in output images. (default: 1000, corresponding to 100×100 pixel squares)
+* **neuron_points_size** – Size of the scatter plot markers used to display detected neurons in output images. (default: 1000, corresponding to the 22.7μm2)
 
 ## Before running the script:
 Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
