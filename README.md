@@ -20,10 +20,6 @@ detect_neurons_tif(input_dir, out_dir, pixel_size)
 ## Before running the script:
 Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
 
-All photos in a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. Update the pixel size information accordingly — this is very important. Photos within a batch may vary in image dimensions but must share the same pixel resolution. The model was trained on images taken at 200x magnification but performs well on images between 100x and 400x. Processing speed will depend on the magnification, as images are rescaled internally.
+All photos in a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. Photos within a batch may vary in image dimensions but must share the same pixel resolution. The model was trained on images taken at 200x magnification but performs well on images between 100x and 400x. Processing speed will depend on the magnification, as images are rescaled internally.
 
-Inspect the images for severe shadows or tissue tears, as these artifacts can affect object detection accuracy. If possible, avoid including large blood vessels.
-
-Prepare a starting folder with a subfolder named photos_raw to store the input images. The results will be saved in the same root folder, in a subfolder named results. Annotations, metadata, and processed images will be saved in three separate subfolders within results.
-
-Install the required Python packages from the requirements.txt file.
+Inspect the images for a severe shadow or tissue tears, as these artifacts can affect object detection accuracy. If possible, avoid including large blood vessels.
