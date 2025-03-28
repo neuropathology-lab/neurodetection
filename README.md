@@ -5,6 +5,7 @@ Detects neurons in immunohistochemically stained images. The script takes as inp
 ```bash
 cd dir/to/neurodetection_pkg
 pip install -e .
+```
 
 ## Usage
 ```python
