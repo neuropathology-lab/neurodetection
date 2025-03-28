@@ -1,0 +1,2 @@
+[console_scripts]
+detect_neurons_tif = neurodetection.detect_neurons_tif:detect_neurons_tif_cli

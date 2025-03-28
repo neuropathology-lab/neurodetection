@@ -1,0 +1,17 @@
+Metadata-Version: 2.4
+Name: neurodetection
+Version: 0.1.0
+Requires-Dist: aicspylibczi>=3.2.1
+Requires-Dist: cellpose>=3.1.1.1
+Requires-Dist: fastai>=2.7.17
+Requires-Dist: imageio>=2.37.0
+Requires-Dist: matplotlib>=3.10.1
+Requires-Dist: numpy<2.1,>=1.20.0
+Requires-Dist: opencv_python>=4.11.0.86
+Requires-Dist: pandas>=2.2.3
+Requires-Dist: Pillow>=11.1.0
+Requires-Dist: scikit_learn>=1.6.1
+Requires-Dist: scipy>=1.15.2
+Requires-Dist: scikit-image>=0.25.2
+Requires-Dist: tqdm>=4.67.1
+Dynamic: requires-dist
