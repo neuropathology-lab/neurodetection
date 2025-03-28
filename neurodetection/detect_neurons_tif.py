@@ -22,7 +22,7 @@ from .detect_objects import detect_objects_with_dbscan
 from .classify_objects import classify_is_neuron
 from .plot_output import three_plots_save
 
-def detect_neurons_tif(input_dir, out_dir, pixel_um, use_hematoxylin = False,
+def detect_neurons_tif(input_dir, out_dir, pixel_size, use_hematoxylin = False,
          edge_threshold = 0, closeness_threshold = 0,
          plot_classification = True, save_detections = True,
          neuron_points_size = 1000, model_name = "learner_isneuron_ptdp_vessels"):
@@ -60,7 +60,7 @@ def detect_neurons_tif(input_dir, out_dir, pixel_um, use_hematoxylin = False,
         out_dir_detections = Path(out_dir_str + "detections")
         out_dir_detections.mkdir(parents=True, exist_ok=True)
 
-    scaling_factor = pixel_um/original_pixel_size
+    scaling_factor = pixel_size/original_pixel_size
 
     # Handle potential problems with '.tif'/'tiff'
     if img_ext == ".tiff":
@@ -142,21 +142,21 @@ def detect_neurons_tif(input_dir, out_dir, pixel_um, use_hematoxylin = False,
         # Calculate neuronal density per mm2
         no_objects = len(measured_df["center_row"].round().astype(int).values)
         no_neurons = len(neurons_df["center_row"])
-        image_area_um = original_img_dim[0]*original_img_dim[1]*pixel_um**2
+        image_area_um = original_img_dim[0]*original_img_dim[1]*pixel_size**2
 
         # Create a list with analysis info and results
         img_info_list.append({
-            "Photo_ID": file_name,
-            "Image_dimensions": original_img_dim,
-            'Pixel_um': pixel_um,
-            'Scaling_factor': scaling_factor,
-            "Edge_threshold_um": edge_threshold,
-            "Closeness_threshold_um": closeness_threshold,
-            "Model": model_name,
-            "Date" : now.strftime('%Y-%m-%d'),
-            "No_detected_objects": no_objects,
-            "No_neurons": no_neurons,
-            "Neuron_density_mm2": (no_neurons * mm2) / image_area_um
+            "image_ID": file_name,
+            "image_dimensions": original_img_dim,
+            'pixel_size_um': pixel_size,
+            'scaling_factor': scaling_factor,
+            "edge_threshold_um": edge_threshold,
+            "closeness_threshold_um": closeness_threshold,
+            "model": model_name,
+            "date" : now.strftime('%Y-%m-%d'),
+            "no_detected_objects": no_objects,
+            "no_neurons": no_neurons,
+            "neuron_density_mm2": (no_neurons * mm2) / image_area_um
         })
 
         # Plot the detections if requested
@@ -195,7 +195,7 @@ def detect_neurons_tif_cli():
     parser.add_argument('out_dir', type=str,
                         help="Path to the output directory where results will be saved.")
 
-    parser.add_argument('--pixel_um', type=float, required=True,
+    parser.add_argument('pixel_size', type=float, required=True,
                         help="Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal.")
 
     parser.add_argument('--plot_classification', action='store_true', default=False,
