@@ -20,12 +20,9 @@ detect_neurons_tif(input_dir, out_dir, pixel_size)
 input_dir – Path to the input directory containing the images (.tif) for analysis. (required)
 
 output_dir – Path to the output directory where results will be saved. This script generates three types of results, each stored in separate folders:
-
-A CSV file with summary information about the analysis, including the number of detected objects and neurons.
-
-CSV files with the centroids of detected neurons.
-
-PNG plots: original images, images with detected objects, and images with detected neurons. (required)
+- A CSV file with summary information about the analysis, including the number of detected objects and neurons.
+- CSV files with the centroids of detected neurons.
+- PNG plots: original images, images with detected objects, and images with detected neurons. (required)
 
 pixel_size – Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal. (required)
 
