@@ -18,7 +18,7 @@ from neurodetection import detect_neurons_tif
 input_dir = path/to/images
 output_dir = path/for/save
 pixel_size = 0.224 # in micrometers
-detect_neurons_tif(input_dir, out_dir, pixel_size)
+detect_neurons_tif(input_dir, output_dir, pixel_size)
 ```
 ## Parameters detect_neurons_tif
 * **input_dir** – Path to the input directory containing the images (.tif) for analysis. (required)
@@ -28,8 +28,8 @@ detect_neurons_tif(input_dir, out_dir, pixel_size)
 * **save_detections** – If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 * **use_hematoxylin** – If set, isolates the hematoxylin channel from IHC-stained images before detection. (default: False)
 * **model_name** – Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
-* **edge_threshold** – Minimum distance (in μm) from image edges. Detected neurons closer than this distance will be discarded. Set to 0 to disable. (default: 0)
-* **closeness_threshold** – Minimum separation distance (in μm) between detected objects. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 0)
+* **edge_threshold** – Minimum distance (in μm) from image edges. Detected neurons closer than this distance will be discarded. Set to 0 to disable. (default: 10μm)
+* **closeness_threshold** – Minimum separation distance (in μm) between detected objects. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 15μm)
 * **neuron_points_size** – Size of the scatter plot markers used to display detected neurons in output images. (default: 1000, corresponding to the 22.7μm2)
 
 ## Before running the script:

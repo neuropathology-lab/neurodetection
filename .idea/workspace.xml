@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="1c1ac7a7-9e60-494d-8237-85ba2c92b0da" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/classify_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/classify_objects.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/plot_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/plot_output.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,24 +37,49 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.example_usage.executor&quot;: &quot;Run&quot;,
-    &quot;Python.example_usage_klara.executor&quot;: &quot;Run&quot;,
-    &quot;Python.process_image.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/klarg/Documents/PHD/neurodetection_pkg&quot;,
-    &quot;python.debugger.dataview.coloredbydefault&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Debug detect_neurons_tif.executor": "Run",
+    "Python.example_usage.executor": "Debug",
+    "Python.example_usage_klara.executor": "Run",
+    "Python.process_image.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/klarg/Documents/PHD/neurodetection_pkg/neurodetection/debug.py",
+    "python.debugger.dataview.coloredbydefault": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\klarg\Documents\PHD\neuron_detection_ihc_pkg\neurodetection" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.example_usage">
+  <component name="RunManager" selected="Python.Debug detect_neurons_tif">
+    <configuration name="Debug detect_neurons_tif" type="PythonConfigurationType" factoryName="Python" folderName="New Folder">
+      <module name="Neuron_detection_neuropatho" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="DISPLAY" value="True" />
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="SDK_NAME" value="neurons" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\klarg\Documents\PHD\neurodetection_pkg" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/neurodetection/debug.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="example_usage" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Neuron_detection_neuropatho" />
       <option name="ENV_FILES" value="" />
@@ -118,6 +146,12 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.Debug detect_neurons_tif" />
+      <item itemvalue="Python.example_usage_klara" />
+      <item itemvalue="Python.process_image" />
+      <item itemvalue="Python.example_usage" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.example_usage" />
