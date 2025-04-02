@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 plt.ioff()
 
-def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_pixels, edge_threshold_pixels, detailed=True, max_dim=10):
+def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_pixels, edge_threshold_pixels, plot_type = "detailed", max_dim=10):
     tab10 = plt.get_cmap('tab10').colors
 
     # Prepare neuron subsets
@@ -14,7 +14,7 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
 
     half_square = square_size_pixels / 2
 
-    if detailed:
+    if plot_type == "detailed":
 
         # Use this size for all subplots for consistency
         subplot_width = min(max_dim, max_dim * aspect_ratio)
@@ -95,7 +95,7 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
             )
             axs[3].add_patch(rect)
 
-    else:
+    if plot_type == "simple":
         # Simpler plot with capped size based on image shape
         max_dim = 10
         if aspect_ratio >= 1:
