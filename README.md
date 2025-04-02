@@ -24,13 +24,13 @@ detect_neurons_tif(input_dir, output_dir, pixel_size)
 * **input_dir** – Path to the input directory containing the images (.tif) for analysis. (required)
 * **output_dir** – Path to the output directory where results will be saved. (required) This script generates three types of results, each stored in separate folders: A CSV file with summary information about the analysis, including the number of detected objects and neurons. CSV files with the centroids of detected neurons. PNG plots: original images, images with detected objects, and images with detected neurons.
 * **pixel_size** – Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal. (required)
-* **plot_classification** – If set, saves plots of the original image, detected objects, and final classified neurons. (default: True)
-* **save_detections** – If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 * **use_hematoxylin** – If set, isolates the hematoxylin channel from IHC-stained images before detection. (default: False)
+* **closeness_threshold** – Minimum separation distance (in μm) between detected objects. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 15μm)* **plot_classification** – If set, saves plots of the original image, detected objects, and final classified neurons. Takes only integers. (default: True)
+* **plot_results** –  Choose the level of result visualization to save: - 'none' disables plotting, -'simple' saves a single image with the original data and final classified neurons overlaid, and -'detailed' saves a figure with four subplots: "the original image, the image with detected objects, all detected neurons, and the final classified neurons. (default: 'detailed')
+* **plot_max_dim** – Maximum dimension (in inches) of the output plot. Increase this value to generate higher-resolution images. Takes only integers. (default: 10)
+* **save_detections** – If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
+* **square_size** – Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron. (default: 22.7)
 * **model_name** – Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
-* **edge_threshold** – Minimum distance (in μm) from image edges. Detected neurons closer than this distance will be discarded. Set to 0 to disable. (default: 10μm)
-* **closeness_threshold** – Minimum separation distance (in μm) between detected objects. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 15μm)
-* **neuron_points_size** – Size of the scatter plot markers used to display detected neurons in output images. (default: 1000, corresponding to the 22.7μm2)
 
 ## Before running the script:
 Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
