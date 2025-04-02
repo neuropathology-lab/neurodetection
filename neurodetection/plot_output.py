@@ -6,8 +6,8 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
     tab10 = plt.get_cmap('tab10').colors
 
     # Prepare neuron subsets
-    neurons = neurons_df[neurons_df["close_objects"] == False]
-    neurons_edge = neurons_df[neurons_df["close_objects"] == True]
+    neurons = neurons_df[(neurons_df["close_objects"] == False) & (neurons_df["objects_edges"] == False)]
+    neurons_edge = neurons_df[(neurons_df["close_objects"] == True) | (neurons_df["objects_edges"] == True)]
 
     img_height, img_width = img.shape[:2]
     aspect_ratio = img_width / img_height
@@ -42,7 +42,7 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
 
         # Plot with dynamic-size squares for neurons
         axs[2].imshow(img)
-        axs[2].set_title("Classified as neurons (grey: removed).\nDotted line indicates the edge of detections.",
+        axs[2].set_title("All detected neurons",
                          fontsize=max_dim*2)
         axs[2].tick_params(axis='both', which='major', labelsize=max_dim)
 
@@ -64,7 +64,7 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
                 (row["center_col"] - half_square, row["center_row"] - half_square),
                 square_size_pixels, square_size_pixels,
                 linewidth=max_dim/4,
-                edgecolor='grey',
+                edgecolor='yellow',
                 facecolor='none'
             )
             axs[2].add_patch(rect)

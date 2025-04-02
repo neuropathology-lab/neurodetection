@@ -23,7 +23,7 @@ from .classify_objects import classify_is_neuron
 from .plot_output import three_plots_save
 
 def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = False, closeness_threshold = int(15),
-         plot_results = True, plot_max_dim = int(10), save_detections = True,
+         plot_results = "detailed", plot_max_dim = int(10), save_detections = True,
          square_size = float(22.7), model_name = "learner_isneuron_ptdp_vessels"):
 
     # Additional parameters
@@ -78,7 +78,7 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
     output_dir_info = Path(output_dir_str + "info")
     output_dir_info.mkdir(parents=True, exist_ok=True)
 
-    if plot_results is not "none":
+    if plot_results != "none":
         output_dir_plots = Path(output_dir_str + "plots")
         output_dir_plots.mkdir(parents=True, exist_ok=True)
 
@@ -184,7 +184,6 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
 
         # Remove detections on the edges
         neurons_df.loc[:, "objects_edges"] = get_objects_edges(neurons_df, img, edge_threshold_pixels=edge_threshold_pixels)
-        neurons_df = neurons_df[neurons_df['objects_edges'] == False]
 
         # Remove neuron detections that are too close to each other
         if (closeness_threshold > 0):
@@ -196,7 +195,7 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
 
         # Plot the detections if requested
         # Gives three plots: raw img, img with detected objects, and img with detected neurons after processing
-        if plot_results is not "none":
+        if plot_results != "none":
             square_size_pixels = square_size/pixel_size
             output_plot_path = output_dir_plots / f"{file_name}_plot.png"
             if (img_ext==".tif"):
@@ -205,6 +204,7 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
 
         # Calculate neuronal density per mm2
         neurons_df = neurons_df[neurons_df['close_objects'] == False]
+        neurons_df = neurons_df[neurons_df['objects_edges'] == False]
         no_objects = len(objects_df["center_row"].round().astype(int).values)
         no_neurons = len(objects_df["center_row"])
         image_area_um = img.shape[0]*img.shape[1]*pixel_size**2
