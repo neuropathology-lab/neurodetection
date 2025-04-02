@@ -22,7 +22,8 @@ detect_neurons_tif(input_dir, output_dir, pixel_size)
 ```
 ## Parameters detect_neurons_tif
 * **`input_dir`** Path to the input directory containing the images (.tif) for analysis. (required)
-* **`output_dir`** A CSV file containing summary information about the analysis, including the number of detected objects and neurons (always generated). A PNG plot visualizing the results (enabled by default). A CSV file with the centroids of detected neurons (disabled by default).
+* **`output_dir`** Path to the output directory where results will be saved. (Required)
+This script generates three types of results, each stored in separate subfolders: A CSV file containing summary information about the analysis, including the number of detected objects and neurons (always generated). A PNG plot visualizing the results (enabled by default). A CSV file with the centroids of detected neurons (disabled by default).
 * **`pixel_size`** Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal. (required)
 * **`use_hematoxylin`** If set, isolates the hematoxylin channel from IHC-stained images before detection. (default: False)
 * **`closeness_threshold`** Minimum separation distance (in μm) between detected objects. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 15μm)* **plot_classification** – If set, saves plots of the original image, detected objects, and final classified neurons. Takes only integers. (default: True)
