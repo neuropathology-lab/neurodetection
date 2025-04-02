@@ -5,4 +5,4 @@ if __name__ == "__main__":
     input_dir = "D:/Klara_PHD/database/test_neuron_detection/photos_raw"
     out_dir = "D:/Klara_PHD/database/test_neuron_detection/results_pkg"
 
-    detect_neurons_tif(input_dir, out_dir, 0.227, use_hematoxylin = True)
+    detect_neurons_tif(input_dir, out_dir, 0.227, min_prob = 0.8)

@@ -2,13 +2,15 @@ from .utils import getPatch
 from tqdm import tqdm
 import cv2
 import numpy as np
+import pandas as pd
 
-def classify_is_neuron(measured_df, img, rowname="center_row", colname="center_col", model=None, scaling_factor=1.0):
+def classify_is_neuron(objects_df, img, rowname="center_row", colname="center_col", model=None, scaling_factor=1.0):
     pred_col = []
+    prob_col = []
 
     # Use .loc access for speed
-    rows = measured_df[rowname].round().astype(int).values
-    cols = measured_df[colname].round().astype(int).values
+    rows = objects_df[rowname].round().astype(int).values
+    cols = objects_df[colname].round().astype(int).values
 
     bar = tqdm(
         total=len(rows),
@@ -38,9 +40,12 @@ def classify_is_neuron(measured_df, img, rowname="center_row", colname="center_c
 
                 # Resize to 100x100 pixels
                 img_patch_resized = cv2.resize(img_patch, (100, 100), interpolation=cv2.INTER_LINEAR)
+                pred_class, pred_idx, outputs = model.predict(img_patch_resized)
+                outputs = pd.DataFrame([outputs.tolist()])
 
-                pred = model.predict(img_patch_resized)
-                pred_col.append(pred[0])
+                pred_col.append(pred_class)
+                prob_col.append(outputs[1])
+
         except Exception as e:
             tqdm.write(f"Patch at ({row}, {col}) failed: {e}")
             pred_col.append(None)
@@ -49,6 +54,7 @@ def classify_is_neuron(measured_df, img, rowname="center_row", colname="center_c
 
     bar.close()
 
-    measured_df["is_neuron"] = pred_col
+    objects_df["is_neuron"] = pred_col
+    objects_df["is_neuron_prob"] = prob_col
 
-    return measured_df
+    return objects_df

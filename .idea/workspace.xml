@@ -5,11 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c1ac7a7-9e60-494d-8237-85ba2c92b0da" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/classify_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/classify_objects.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/debug.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neurodetection/plot_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/plot_output.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,19 +37,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.Debug detect_neurons_tif.executor&quot;: &quot;Run&quot;,
-    &quot;Python.example_usage.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.example_usage_klara.executor&quot;: &quot;Run&quot;,
-    &quot;Python.process_image.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/klarg/Documents/PHD/neurodetection_pkg/neurodetection/debug.py&quot;,
-    &quot;python.debugger.dataview.coloredbydefault&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Debug detect_neurons_tif.executor": "Run",
+    "Python.example_usage.executor": "Debug",
+    "Python.example_usage_klara.executor": "Run",
+    "Python.process_image.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/klarg/Documents/PHD/neurodetection_pkg/neurodetection/debug.py",
+    "python.debugger.dataview.coloredbydefault": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\klarg\Documents\PHD\neuron_detection_ihc_pkg\neurodetection" />

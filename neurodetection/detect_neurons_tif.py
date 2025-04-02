@@ -24,7 +24,7 @@ from .plot_output import three_plots_save
 
 def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = False, closeness_threshold = int(15),
          plot_results = "detailed", plot_max_dim = int(10), save_detections = True,
-         square_size = float(22.7), model_name = "learner_isneuron_ptdp_vessels"):
+         square_size = float(22.7), min_prob = 0.8, model_name = "learner_isneuron_ptdp_vessels"):
 
     # Additional parameters
     original_pixel_size = 0.227  # Pixel size (in µm) of images used during model training; used as a rescaling factor
@@ -116,7 +116,7 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
         output_info_path = output_dir_info / f"{file_name}_info.csv"
 
         now = datetime.datetime.now()
-        print(f"Started processing:     {file_name} [{now.strftime('%Y-%m-%d %H:%M:%S')}]")
+        print(f"Started processing: {file_name} [{now.strftime('%Y-%m-%d %H:%M:%S')}]")
         # Load image
         img = load_image(img_path, img_ext)
 
@@ -150,6 +150,14 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
         try:
             objects_df = classify_is_neuron(objects_df, img, model=is_neuron_model, scaling_factor = scaling_factor)
             neurons_df = objects_df[objects_df["is_neuron"] == "Positive"].copy()
+
+            # Increase specificity if necessary
+            if min_prob != 0.5:
+                neurons_df.loc[
+                    neurons_df['is_neuron_prob'].apply(lambda x: x[0] < min_prob),
+                    'is_neuron'
+                ] = "Negative"
+                neurons_df = neurons_df[neurons_df["is_neuron"] == "Positive"]
         except:
             print("Warning: Object classification failed " + str(file_name) + ". Skipping.")
             if counter == 0:
@@ -219,6 +227,7 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
             "closeness_threshold_um": closeness_threshold,
             "model": model_name,
             "date" : now.strftime('%Y-%m-%d'),
+            "minimum_probability": min_prob,
             "no_detected_objects": no_objects,
             "no_neurons": no_neurons,
             "neuron_density_mm2": (no_neurons * mm2) / image_area_um
@@ -234,7 +243,7 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
         img_info_df.to_csv(output_info_path, index=False)
         
         now = datetime.datetime.now()
-        print(f"Results saved for:  {file_name} [{now.strftime('%Y-%m-%d %H:%M:%S')}]")
+        print(f"Results saved for: {file_name} [{now.strftime('%Y-%m-%d %H:%M:%S')}]")
 
         del objects_df, neurons_df, img
         gc.collect()
@@ -275,6 +284,9 @@ def detect_neurons_tif_cli():
 
     parser.add_argument('--square_size', type=float, default=22.7,
                         help="Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron.")
+
+    parser.add_argument('--min_prob', type=float, default=0.8,
+                        help="Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity.")
 
     parser.add_argument('--model_name', type=str, default="learner_isneuron_ptdp_vessels",
                         help="Base name of the trained model file used for neuron classification (expects a .pkl file).")
