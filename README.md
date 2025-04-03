@@ -3,7 +3,7 @@ Detects neurons in images of immunohistochemically stained tissue sections.
 
 The script takes as input a folder of microscopy images in RGB .tif format and outputs the number of detected neurons, their positions, and a plot with detected objects and neurons overlaid on the original images. To run the script, information about pixel size in micrometers is required.
 
-Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network, pre-trained on ImageNet and fine-tuned with 31,273 neuron and 91,528 non-neuron samples.
+Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network fine-tuned with 31,273 neuron and 91,528 non-neuron samples.
 
 ## Installation (for now)
 ```bash
