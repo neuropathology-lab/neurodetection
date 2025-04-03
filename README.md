@@ -31,6 +31,7 @@ This script generates three types of results, each stored in separate subfolders
 * **`plot_max_dim`** Maximum dimension (in inches) of the output plot. Increase this value to generate higher-resolution images. Takes only integers. (default: 10)
 * **`save_detections`** If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 * **`square_size`** Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron. (default: 22.7)
+* **`min_prob`** Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity. (default: 0.9)
 * **`model_name`** Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
 
 ## Before running the script:
