@@ -1,5 +1,5 @@
 # Neurodetection
-Detects neurons in immunohistochemically stained images. 
+Detects neurons in images of immunohistochemically stained tissue sections. 
 
 The script takes as input a folder of microscopy images in RGB .tif format and outputs the number of detected neurons, their positions, and a plot with detected objects and neurons overlaid on the original images. To run the script, information about pixel size in micrometers is required.
 
