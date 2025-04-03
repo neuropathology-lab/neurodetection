@@ -9,7 +9,7 @@ def cut_bboxes_from_center(df: pd.DataFrame, image: np.ndarray, labeled_image: n
     if image_prefix and not image_prefix.endswith("_"):
         image_prefix += "_"
     if not output_dir:
-        output_dir = Path(".")
+        output_dir = Path("neurodetection")
     else:
         output_dir = Path(output_dir)
 

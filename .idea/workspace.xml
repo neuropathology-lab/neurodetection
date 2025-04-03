@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c1ac7a7-9e60-494d-8237-85ba2c92b0da" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/neurodetection/scaling.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/neurodetection/setup_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/classify_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/classify_objects.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/debug.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/detect_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detect_objects.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/detections_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detections_processing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/isolate_single_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/isolate_single_objects.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/utils.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +32,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -52,6 +57,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\klarg\Documents\PHD\neurodetection_pkg" />
       <recent name="C:\Users\klarg\Documents\PHD\neuron_detection_ihc_pkg\neurodetection" />
     </key>
   </component>
@@ -180,6 +186,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/neurodetection/detect_neurons_tif.py</url>
+          <line>141</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">

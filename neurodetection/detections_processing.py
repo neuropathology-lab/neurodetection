@@ -42,8 +42,8 @@ def get_too_close_objects_deterministic(objects_df, radius_threshold=0):
 
     return close_objects_mask
 
-# Old version
 def get_too_close_objects(objects_df, radius_threshold=0):
+    # Old versions - deprecated
 
     objects_tree = KDTree(objects_df[["center_col", "center_row"]])
     objects_close_pairs = objects_tree.query_pairs(radius_threshold)
@@ -56,3 +56,13 @@ def get_too_close_objects(objects_df, radius_threshold=0):
     close_objects_mask[list(objects_to_remove)] = True
 
     return close_objects_mask
+
+def get_too_close_objects_main(neurons_df, closeness_threshold, scaling_factor_threshold):
+    if (closeness_threshold > 0):
+        radius_threshold = closeness_threshold / scaling_factor_threshold
+        close_objects_mask = get_too_close_objects_deterministic(neurons_df, radius_threshold=radius_threshold)
+        neurons_df.loc[:, "close_objects"] = close_objects_mask.astype(bool)
+    else:
+        neurons_df.loc[:, "close_objects"] = False
+
+    return neurons_df

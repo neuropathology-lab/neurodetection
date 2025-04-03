@@ -3,6 +3,7 @@ from skimage.measure import label
 from skimage.color import rgb2gray
 from skimage.filters import threshold_otsu, threshold_local
 from scipy.ndimage import binary_fill_holes
+import pandas as pd
 
 def detect_objects_with_dbscan(img, sigma, pixel_density, block_size = 51):
     from sklearn.cluster import DBSCAN
@@ -101,3 +102,18 @@ def detect_objects_on_rgb_img_with_cellpose(img, diameter=100):
 
     return mask
 
+def object_detection_main(img, file_name):
+
+    try:
+        blobs = detect_objects_with_dbscan(img, sigma=10, pixel_density=2)
+    except:
+        print("Warning: Object detection failed " + str(file_name) + ". Skipping.")
+        return
+
+    # Convert blobs into measured DataFrame
+    objects_df = pd.DataFrame({
+        'center_row': blobs[:, 0],
+        'center_col': blobs[:, 1],
+        'label': blobs[:, 2]
+    })
+    return objects_df

@@ -1,10 +1,54 @@
-from .utils import getPatch
 from tqdm import tqdm
 import cv2
 import numpy as np
 import pandas as pd
 
+def getPatch(arr, idx, radius=3, fill=None):
+    """
+    Gets surrounding elements from a numpy array
+
+    Parameters:
+    arr (ndarray of rank N): Input array
+    idx (N-Dimensional Index): The index at which to get surrounding elements. If None is specified for a particular axis,
+        the entire axis is returned.
+    radius (array-like of rank N or scalar): The radius across each axis. If None is specified for a particular axis,
+        the entire axis is returned.
+    fill (scalar or None): The value to fill the array for indices that are out-of-bounds.
+        If value is None, only the surrounding indices that are within the original array are returned.
+
+    Returns:
+    ndarray: The surrounding elements at the specified index
+    """
+
+    assert len(idx) == len(arr.shape)
+
+    if np.isscalar(radius):
+        radius = tuple([radius for i in range(len(arr.shape))])
+
+    slices = []
+    paddings = []
+    for axis in range(len(arr.shape)):
+        if idx[axis] is None or radius[axis] is None:
+            slices.append(slice(0, arr.shape[axis]))
+            paddings.append((0, 0))
+            continue
+
+        r = radius[axis]
+        l = idx[axis] - r
+        r = idx[axis] + r
+
+        pl = 0 if l > 0 else abs(l)
+        pr = 0 if r < arr.shape[axis] else r - arr.shape[axis] + 1
+
+        slices.append(slice(max(0, l), min(arr.shape[axis], r+1)))
+        paddings.append((pl, pr))
+
+    if fill is None:
+        return arr[tuple(slices)]
+    return np.pad(arr[tuple(slices)], paddings, 'constant', constant_values=fill)
+
 def classify_is_neuron(objects_df, img, rowname="center_row", colname="center_col", model=None, scaling_factor=1.0):
+
     pred_col = []
     prob_col = []
 
@@ -20,16 +64,15 @@ def classify_is_neuron(objects_df, img, rowname="center_row", colname="center_co
         maxinterval=0.5,
         ascii=True
     )
-
+    # Apply scaling to radius
+    scaled_radius = (
+        int(50 * scaling_factor),
+        int(50 * scaling_factor),
+        None
+    )
     for row, col in zip(rows, cols):
         try:
             with tqdm(disable=True):
-                # Apply scaling to radius
-                scaled_radius = (
-                    int(50 * scaling_factor),
-                    int(50 * scaling_factor),
-                    None
-                )
 
                 img_patch = getPatch(img, (row, col, None), radius=scaled_radius, fill=0)
 
@@ -58,3 +101,14 @@ def classify_is_neuron(objects_df, img, rowname="center_row", colname="center_co
     objects_df["is_neuron_prob"] = prob_col
 
     return objects_df
+
+def change_specificity(neurons_df, min_prob):
+    if min_prob != 0.5:
+
+        neurons_df.loc[
+            neurons_df['is_neuron_prob'].apply(lambda x: x[0] < min_prob),
+            'is_neuron'
+        ] = "Negative"
+        neurons_df = neurons_df[neurons_df["is_neuron"] == "Positive"]
+
+    return neurons_df
