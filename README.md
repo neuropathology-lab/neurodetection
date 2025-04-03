@@ -27,11 +27,11 @@ This script generates three types of results, each stored in separate subfolders
 * **`pixel_size`** Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal. (required)
 * **`use_hematoxylin`** If set, isolates the hematoxylin channel from IHC-stained images before detection. (default: False)
 * **`closeness_threshold`** Minimum separation distance (in μm) between detected objects. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 15)
+* **`square_size`** Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron. (default: 22.7)
+* **`min_prob`** Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity. (default: 0.9)
 * **`plot_results`**  Choose the level of result visualization to save: `none` disables plotting, `simple` saves a single image with the original data and final classified neurons overlaid, and `detailed` saves a figure with four subplots: "the original image, the image with detected objects, all detected neurons, and the final classified neurons. (default: `detailed`)
 * **`plot_max_dim`** Maximum dimension (in inches) of the output plot. Increase this value to generate higher-resolution images. Takes only integers. (default: 10)
 * **`save_detections`** If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
-* **`square_size`** Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron. (default: 22.7)
-* **`min_prob`** Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity. (default: 0.9)
 * **`model_name`** Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
 
 ## Before running the script:
