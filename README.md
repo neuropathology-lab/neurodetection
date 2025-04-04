@@ -12,12 +12,14 @@ pip install -e .
 ```
 
 ## Usage
-```python
-from neurodetection import detect_neurons_tif
 
-input_dir = path/to/images
-output_dir = path/for/save
-pixel_size = 0.224 # in micrometers
+```python
+from neurodetection import detectNeurons
+
+input_dir = path / to / images
+output_dir = path /
+for / save
+pixel_size = 0.224  # in micrometers
 detect_neurons_tif(input_dir, output_dir, pixel_size)
 ```
 ## Parameters detect_neurons_tif

@@ -47,7 +47,7 @@ def getPatch(arr, idx, radius=3, fill=None):
         return arr[tuple(slices)]
     return np.pad(arr[tuple(slices)], paddings, 'constant', constant_values=fill)
 
-def classify_is_neuron(objects_df, img, rowname="center_row", colname="center_col", model=None, scaling_factor=1.0):
+def classifyIsNeuron(objects_df, img, rowname="center_row", colname="center_col", model=None, scaling_factor=1.0):
 
     pred_col = []
     prob_col = []
@@ -104,7 +104,7 @@ def classify_is_neuron(objects_df, img, rowname="center_row", colname="center_co
 
     return objects_df
 
-def change_specificity(neurons_df, min_prob):
+def changeSpecificity(neurons_df, min_prob):
     if min_prob != 0.5:
 
         neurons_df.loc[

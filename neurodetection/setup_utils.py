@@ -1,6 +1,6 @@
 from pathlib import Path
 
-def validate_inputs(input_dir, output_dir, use_hematoxylin, square_size, plot_max_dim, min_prob, save_detections, pixel_size,
+def validateInputs(input_dir, output_dir, use_hematoxylin, square_size, plot_max_dim, min_prob, save_detections, pixel_size,
                     closeness_threshold, plot_results):
 
     if not type(input_dir) or not type(output_dir) is str:
@@ -31,7 +31,7 @@ def validate_inputs(input_dir, output_dir, use_hematoxylin, square_size, plot_ma
     if plot_results not in allowed_plot_options:
         raise ValueError(f"plot_results must be one of: {', '.join(allowed_plot_options)}.")
 
-def check_folders( input_dir, output_dir):
+def checkFolders( input_dir, output_dir):
     # Make sure that paths exists
     if not Path(input_dir).exists():
         raise FileNotFoundError(f"The input directory '{input_dir}' does not exist.")
@@ -39,7 +39,7 @@ def check_folders( input_dir, output_dir):
     if not Path(output_dir).exists():
         raise FileNotFoundError(f"The output directory '{output_dir}' does not exist.")
 
-def check_img(input_dir, img_ext):
+def checkImg(input_dir, img_ext):
 
     if any(Path(input_dir).glob("*" + ".tiff")):
         img_ext = ".tiff"
@@ -48,12 +48,12 @@ def check_img(input_dir, img_ext):
     if not any(Path(input_dir).glob("*" + img_ext)):
         raise FileNotFoundError(f"No image files with extension '{img_ext}' found in {input_dir}")
 
-def check_model(model_name):
+def checkModel(model_name):
     model_path = Path(__file__).parent / "Models" / f"{model_name}.pkl"
     if not model_path.exists():
         raise FileNotFoundError(f"No model file named '{model_name}.pkl' found in '{model_path}'")
 
-def make_output_folders(output_dir, plot_results, save_detections):
+def makeOutputFolders(output_dir, plot_results, save_detections):
     output_dir_str = output_dir + "/"
 
     output_dir_info = Path(output_dir_str + "info")

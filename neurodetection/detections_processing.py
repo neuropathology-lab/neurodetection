@@ -8,7 +8,7 @@ from scipy.spatial import KDTree
 from sklearn.cluster import DBSCAN
 import numpy as np
 
-def get_objects_edges(objects_df, img, edge_threshold_pixels=0):
+def getObjectsEdges(objects_df, img, edge_threshold_pixels=0):
 
     objects_edges_mask = (objects_df["center_row"] > edge_threshold_pixels) & \
                      (objects_df["center_row"] < img.shape[0] - edge_threshold_pixels) & \
@@ -19,7 +19,7 @@ def get_objects_edges(objects_df, img, edge_threshold_pixels=0):
     reversed_objects_edges_mask = ~objects_edges_mask
     return reversed_objects_edges_mask
 
-def get_too_close_objects_deterministic(objects_df, radius_threshold=0):
+def getTooCloseObjectsDeterministic(objects_df, radius_threshold=0):
     """
     Returns a boolean mask for objects that are too close to others,
     keeping only one per cluster. Deterministic.
@@ -42,7 +42,7 @@ def get_too_close_objects_deterministic(objects_df, radius_threshold=0):
 
     return close_objects_mask
 
-def get_too_close_objects(objects_df, radius_threshold=0):
+def getTooCloseObjectsRandom(objects_df, radius_threshold=0):
     # Old versions - deprecated
 
     objects_tree = KDTree(objects_df[["center_col", "center_row"]])
@@ -58,7 +58,7 @@ def get_too_close_objects(objects_df, radius_threshold=0):
     return close_objects_mask
 
 
-def get_too_close_objects_main(neurons_df, closeness_threshold, pixel_size):
+def getTooCloseObjectsMain(neurons_df, closeness_threshold, pixel_size):
     if closeness_threshold > 0:
         radius_threshold = closeness_threshold / pixel_size
 
@@ -66,7 +66,7 @@ def get_too_close_objects_main(neurons_df, closeness_threshold, pixel_size):
         mask_to_process = neurons_df["objects_edges"] == False
         subset_df = neurons_df[mask_to_process]
 
-        close_objects_mask = get_too_close_objects_deterministic(
+        close_objects_mask = getTooCloseObjectsDeterministic(
             subset_df, radius_threshold=radius_threshold
         )
 

@@ -9,7 +9,7 @@ import imageio
 import numpy as np
 
 def convertCziToUsableArray(czi):
-    
+    # not used
     img, shp = czi.read_image(c=0)
     img = img.astype(np.float32)
     if img.ndim == 6:
@@ -31,26 +31,23 @@ def normImage(img):
 
     return (img - mn) * (1.0 / (mx - mn))
 
-def separate_hematoxylin(img, img_ext):
+def separateHematoxylin(img):
 
     # Separate the stains from the IHC image
     img_hd = rgb2hed(img)
 
     # Create an RGB image for each of the stains
     null = np.zeros_like(img_hd[:, :, 0])
-    if (img_ext ==".tif"):
-        img_h = hed2rgb(np.stack((null, null, img_hd[:, :, 2]), axis=-1))
-    if (img_ext ==".czi"):
-        img_h = hed2rgb(np.stack((img_hd[:, :, 0], null, null), axis=-1))
+
+    img_h = hed2rgb(np.stack((null, null, img_hd[:, :, 2]), axis=-1))
 
     return img_h
 
-def process_image(img, img_ext):
-    
-    if (img_ext==".czi"):
-        # Remove empty axis
-        img = img[0, :, :, :]
-        
+def processImage(img):
+
+    # Remove empty axis if .czi file
+    # img = img[0, :, :, :]
+
     # Convert rgb to bgr, as the microscrope intended
     img = img[ :, :, ::-1]
     # Normalize between 0 and 1

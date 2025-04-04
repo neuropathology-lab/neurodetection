@@ -1,88 +1,73 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import MultipleLocator, FuncFormatter
+import math
+
 plt.ioff()
 
-
-def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size, pixel_size, edge_threshold_pixels, plot_type, max_dim):
+def threePlotsSave(img, objects_df, neurons_df, output_plot_path, square_size, pixel_size, edge_threshold_pixels, plot_type, max_dim):
     tab10 = plt.get_cmap('tab10').colors
 
-    # Prepare neuron subsets
-    neurons = neurons_df[(neurons_df["close_objects"] == False) & (neurons_df["objects_edges"] == False)]
-    neurons_edge = neurons_df[(neurons_df["close_objects"] == True) | (neurons_df["objects_edges"] == True)]
+    # Split neuron categories
+    neurons = neurons_df[~(neurons_df["close_objects"] | neurons_df["objects_edges"])]
+    neurons_edge = neurons_df[neurons_df["close_objects"] | neurons_df["objects_edges"]]
 
     img_height, img_width = img.shape[:2]
     aspect_ratio = img_width / img_height
-
-    # Get size of the square size for classification in pixels
     square_size_pixels = square_size / pixel_size
     half_square = square_size_pixels / 2
 
-    # Change ticks vales from pixels to um
-    formatter = FuncFormatter(lambda value, _: f'{value * pixel_size:.1f}')
+    # Tick spacing in micrometers
+    def roundup(x):
+        return int(math.floor(x / 10.0)) * 10
+
+    tick_spacing_height_um = roundup(img_height*pixel_size/5)
+    tick_spacing_width_um = roundup(img_height*pixel_size/5)
+
+    # Convert that spacing to pixels
+    tick_spacing_height_px = tick_spacing_height_um / pixel_size
+    tick_spacing_width_px = tick_spacing_width_um / pixel_size
+
+    formatter = FuncFormatter(lambda value, _: f'{value * pixel_size:.0f}')
+
+    def format_axes(ax, title):
+        ax.imshow(img)
+        ax.set_title(title, fontsize=max_dim*2)
+        ax.yaxis.set_major_locator(MultipleLocator(tick_spacing_height_px))
+        ax.xaxis.set_major_locator(MultipleLocator(tick_spacing_width_px))
+        ax.xaxis.set_major_formatter(formatter)
+        ax.yaxis.set_major_formatter(formatter)
+        ax.tick_params(axis='both', which='major', labelsize=max_dim*1.5)
+
+    def draw_squares(ax, df, color):
+        for _, row in df.iterrows():
+            rect = Rectangle(
+                (row["center_col"] - half_square, row["center_row"] - half_square),
+                square_size_pixels, square_size_pixels,
+                linewidth=max_dim / 4,
+                edgecolor=color,
+                facecolor='none'
+            )
+            ax.add_patch(rect)
 
     if plot_type == "detailed":
-
-        # Use this size for all subplots for consistency
         subplot_width = min(max_dim, max_dim * aspect_ratio)
         subplot_height = min(max_dim, max_dim / aspect_ratio)
-
-        # Final figure size: 2x2 subplots → 2 rows and 2 cols
-        fig_width = 2 * subplot_width
-        fig_height = 2 * subplot_height
-
-        plt.rcParams["figure.figsize"] = [fig_width, fig_height]
-
-        fig, axs = plt.subplots(2, 2, sharex=True, sharey=True, constrained_layout=True)
+        fig, axs = plt.subplots(2, 2, figsize=(2 * subplot_width, 2 * subplot_height), sharex=True, sharey=True, constrained_layout=True)
         axs = axs.flatten()
 
-        # plot with only raw photo
-        axs[0].imshow(img)
-        axs[0].set_title("Raw photo", fontsize=max_dim*2)
-        axs[0].xaxis.set_major_formatter(formatter)
-        axs[0].yaxis.set_major_formatter(formatter)
-        axs[0].tick_params(axis='both', which='major', labelsize=max_dim*2)
+        titles = ["Raw photo", "All detected objects", "All detected neurons", "Detected neurons (final)"]
+        for i, title in enumerate(titles):
+            format_axes(axs[i], title)
 
-        # plot with all detected objects
-        axs[1].imshow(img)
-        axs[1].set_title("All detected objects", fontsize=max_dim*2)
-        axs[1].scatter(objects_df["center_col"], objects_df["center_row"], color="r", s = (max_dim*max_dim)/2)
-        axs[1].xaxis.set_major_formatter(formatter)
-        axs[1].yaxis.set_major_formatter(formatter)
-        axs[1].tick_params(axis='both', which='major', labelsize=max_dim*2)
+        axs[1].scatter(objects_df["center_col"], objects_df["center_row"], color="r", s=(max_dim * max_dim) / 2)
 
-        # Plot with dynamic-size squares for neurons
-        axs[2].imshow(img)
-        axs[2].set_title("All detected neurons",
-                         fontsize=max_dim*2)
-        axs[2].xaxis.set_major_formatter(formatter)
-        axs[2].yaxis.set_major_formatter(formatter)
-        axs[2].tick_params(axis='both', which='major', labelsize=max_dim*2)
+        # For axs[2] and axs[3], draw squares
+        for i in [2, 3]:
+            draw_squares(axs[i], neurons, tab10[1])
+        draw_squares(axs[2], neurons_edge, 'yellow')
 
-
-        # Draw orange squares for far neurons
-        for _, row in neurons.iterrows():
-            rect = Rectangle(
-                (row["center_col"] - half_square, row["center_row"] - half_square),
-                square_size_pixels, square_size_pixels,
-                linewidth=max_dim/4,
-                edgecolor=tab10[1],
-                facecolor='none'
-            )
-            axs[2].add_patch(rect)
-
-        # Draw light grey squares for edge neurons
-        for _, row in neurons_edge.iterrows():
-            rect = Rectangle(
-                (row["center_col"] - half_square, row["center_row"] - half_square),
-                square_size_pixels, square_size_pixels,
-                linewidth=max_dim/4,
-                edgecolor='yellow',
-                facecolor='none'
-            )
-            axs[2].add_patch(rect)
-
-        # Add dotted frame indicating edge threshold
+        # Add edge threshold frame to axs[2]
         frame = Rectangle(
             (edge_threshold_pixels, edge_threshold_pixels),
             img_width - 2 * edge_threshold_pixels,
@@ -94,52 +79,14 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size,
         )
         axs[2].add_patch(frame)
 
-        # Plot with same dynamic-size squares for comparison
-        axs[3].imshow(img)
-        axs[3].set_title("Detected neurons (final)", fontsize=max_dim*2)
-        axs[3].xaxis.set_major_formatter(formatter)
-        axs[3].yaxis.set_major_formatter(formatter)
-        axs[3].tick_params(axis='both', which='major', labelsize=max_dim*2)
-
-        for _, row in neurons.iterrows():
-            rect = Rectangle(
-                (row["center_col"] - half_square, row["center_row"] - half_square),
-                square_size_pixels, square_size_pixels,
-                linewidth=max_dim/4,
-                edgecolor=tab10[1],
-                facecolor='none'
-            )
-            axs[3].add_patch(rect)
-
-    if plot_type == "simple":
-        # Simpler plot with capped size based on image shape
+    elif plot_type == "simple":
         max_dim = 10
-        if aspect_ratio >= 1:
-            fig_width = max_dim
-            fig_height = max_dim / aspect_ratio
-        else:
-            fig_width = max_dim * aspect_ratio
-            fig_height = max_dim
+        fig_width = max_dim if aspect_ratio >= 1 else max_dim * aspect_ratio
+        fig_height = max_dim / aspect_ratio if aspect_ratio >= 1 else max_dim
 
-        plt.rcParams["figure.figsize"] = [fig_width, fig_height]
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+        format_axes(ax, "Detected neurons")
+        draw_squares(ax, neurons, tab10[1])
 
-        fig, ax = plt.subplots()
-        ax.imshow(img)
-        ax.set_title("Detected neurons", fontsize=max_dim*2)
-        ax.xaxis.set_major_formatter(formatter)
-        ax.yaxis.set_major_formatter(formatter)
-        ax.tick_params(axis='both', which='major', labelsize=max_dim*2)
-
-        for _, row in neurons.iterrows():
-            rect = Rectangle(
-                (row["center_col"] - half_square, row["center_row"] - half_square),
-                square_size_pixels, square_size_pixels,
-                linewidth=max_dim/4,
-                edgecolor=tab10[1],
-                facecolor='none'
-            )
-            ax.add_patch(rect)
-
-    # Save plot
     fig.savefig(output_plot_path)
     plt.close(fig)

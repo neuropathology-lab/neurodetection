@@ -5,7 +5,7 @@ from skimage.filters import threshold_otsu, threshold_local
 from scipy.ndimage import binary_fill_holes
 import pandas as pd
 
-def detect_objects_with_dbscan(img, sigma, pixel_density, block_size = 51):
+def detectObjectsWithDbscan(img, sigma, pixel_density, block_size = 51):
     from sklearn.cluster import DBSCAN
     from scipy.ndimage import center_of_mass, label
     from skimage.filters import gaussian, threshold_otsu
@@ -79,33 +79,10 @@ def detect_objects_with_dbscan(img, sigma, pixel_density, block_size = 51):
 
         return combined_local_maxi
 
-# Other objects detectors (not used)
-def detect_objects_on_rgb_img(rgb_img):
-    gray_img = rgb2gray(rgb_img)
-
-    thresh = threshold_otsu(gray_img)
-    # imgs are black on white
-    binary = gray_img < thresh
-    # eroded = erosion(binary, disk(5))
-    labeled_image = label(binary)
-    return labeled_image
-
-
-def detect_objects_on_rgb_img_with_cellpose(img, diameter=100):
-    from cellpose import models
-
-    inverted_img =  1 - img
-
-    model = models.Cellpose(gpu=False, model_type="nuclei")
-    channels = [0,0]
-    mask, flows, styles, diams = model.eval(inverted_img, diameter=diameter, channels=channels)
-
-    return mask
-
-def object_detection_main(img, file_name):
+def objectDetectionMain(img, file_name):
 
     try:
-        blobs = detect_objects_with_dbscan(img, sigma=10, pixel_density=2)
+        blobs = detectObjectsWithDbscan(img, sigma=10, pixel_density=2)
     except:
         print("Warning: Object detection failed " + str(file_name) + ". Skipping.")
         return
