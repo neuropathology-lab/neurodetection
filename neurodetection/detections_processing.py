@@ -57,12 +57,23 @@ def get_too_close_objects(objects_df, radius_threshold=0):
 
     return close_objects_mask
 
-def get_too_close_objects_main(neurons_df, closeness_threshold, scaling_factor_threshold):
-    if (closeness_threshold > 0):
-        radius_threshold = closeness_threshold / scaling_factor_threshold
-        close_objects_mask = get_too_close_objects_deterministic(neurons_df, radius_threshold=radius_threshold)
-        neurons_df.loc[:, "close_objects"] = close_objects_mask.astype(bool)
+
+def get_too_close_objects_main(neurons_df, closeness_threshold, pixel_size):
+    if closeness_threshold > 0:
+        radius_threshold = closeness_threshold / pixel_size
+
+        # Work only on rows where objects_edges is False
+        mask_to_process = neurons_df["objects_edges"] == False
+        subset_df = neurons_df[mask_to_process]
+
+        close_objects_mask = get_too_close_objects_deterministic(
+            subset_df, radius_threshold=radius_threshold
+        )
+
+        # Assign only to the relevant subset, keep others as NaN
+        neurons_df.loc[mask_to_process, "close_objects"] = close_objects_mask.astype(bool)
+
     else:
-        neurons_df.loc[:, "close_objects"] = False
+        neurons_df["close_objects"] = False
 
     return neurons_df

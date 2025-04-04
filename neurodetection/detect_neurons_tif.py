@@ -23,17 +23,19 @@ from .detect_objects import object_detection_main
 from .classify_objects import classify_is_neuron, change_specificity
 from .plot_output import three_plots_save
 
-def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = False, closeness_threshold = int(15),
-         plot_results = "detailed", plot_max_dim = int(10), save_detections = True,
-         square_size = float(22.7), min_prob = 0.9, model_name = "learner_isneuron_ptdp_vessels"):
+def detect_neurons_tif(input_dir, output_dir, pixel_size,
+                        use_hematoxylin = False, closeness_threshold = int(15),
+                        square_size = float(22.7), min_prob = 0.8,
+                        plot_results = "detailed", plot_max_dim = int(10),
+                        save_detections = True, model_name = "learner_isneuron_ptdp_vessels"):
 
     # Additional parameters (can be changed in case of a custom model)
     original_pixel_size     = 0.227 # Pixel size (in µm) of images used during model training; used as a rescaling factor
     original_square_size    = original_pixel_size * 100 # Side length (in µm) of the square region used to train the classifier
 
     # Check users parameters
-    validate_inputs(input_dir, output_dir, use_hematoxylin, save_detections, pixel_size,
-                    closeness_threshold, square_size, plot_max_dim, plot_results)
+    validate_inputs(input_dir, output_dir, use_hematoxylin, square_size, plot_max_dim, min_prob, save_detections,
+                    pixel_size, closeness_threshold, plot_results)
 
     # Make sure that the model exists
     check_model(model_name)
@@ -57,8 +59,8 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
     edge_threshold_pixels =  math.ceil((square_size / 2) / pixel_size)
 
     # Calculate scaling parameter:
-    scaling_factor, scaling_factor_pixel, scaling_factor_threshold, square_size_pixels = (
-        get_scaling(original_pixel_size, pixel_size, original_square_size, square_size, closeness_threshold))
+    scaling_factor_square = (
+        get_scaling(original_pixel_size, pixel_size, original_square_size, square_size))
 
     # Process each photo in the input directory
     print("Processing photos from " + input_dir + f" [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
@@ -92,7 +94,7 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
 
         # Classify objects as neurons using resized image and updated coordinates
         try:
-            objects_df = classify_is_neuron(objects_df, img, model=is_neuron_model, scaling_factor = scaling_factor)
+            objects_df = classify_is_neuron(objects_df, img, model=is_neuron_model, scaling_factor = scaling_factor_square)
             neurons_df = objects_df[objects_df["is_neuron"] == "Positive"].copy()
         except:
             print("Warning: Object classification failed " + str(file_name) + ". Skipping.")
@@ -102,8 +104,11 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
             else:
                 raise Exception("Object classification failed for more than one image. Exiting.")
 
+        # Increase specificity if necessary
+        neurons_df = change_specificity(neurons_df, min_prob)
+
         # If classification succeeded but no neurons were detected, save the CSV with results and continue
-        if neurons_df is None or len(neurons_df) == 0:
+        if neurons_df.empty:
 
             img_info_list.append({
                 "image_ID": file_name,
@@ -122,31 +127,32 @@ def detect_neurons_tif(input_dir, output_dir, pixel_size, use_hematoxylin = Fals
             print(f"Warning: No neurons detected  for:  {file_name}. Results saved. [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
             continue
 
-        # Increase specificity if necessary
-        neurons_df = change_specificity(neurons_df, min_prob)
-
         # Remove detections on the edges
         neurons_df.loc[:, "objects_edges"] = get_objects_edges(neurons_df, img, edge_threshold_pixels=edge_threshold_pixels)
 
-        # Remove neuron detections that are too close to each other
-        neurons_df = get_too_close_objects_main(neurons_df, closeness_threshold, scaling_factor_threshold)
+        # Remove neuron detections that are too close to each other (only for detection not on the edges)
+        neurons_df = get_too_close_objects_main(neurons_df, closeness_threshold, pixel_size)
 
         # Plot the detections if requested
         # Gives three plots: raw img, img with detected objects, and img with detected neurons after processing
         if plot_results != "none":
             if (img_ext==".tif"):
                 img = img[ :, :, ::-1]
-            three_plots_save(img, objects_df, neurons_df, output_dir_plots / f"{file_name}_plot.png", square_size_pixels, edge_threshold_pixels, plot_results, plot_max_dim)
+            output_path_plots = output_dir_plots / f"{file_name}_plot.png"
+            three_plots_save(img, objects_df, neurons_df, output_path_plots, square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
 
         # Remove the neurons that were considered too close to other neurons and neurons on the edges
         neurons_df = neurons_df[(neurons_df['close_objects'] == False) & (neurons_df['objects_edges'] == False)]
 
         # Create a list with analysis info and results
-        neuron_density_mm2 = (len(neurons_df) * 1_000_000) / (img.shape[0] * img.shape[1] * pixel_size ** 2)
+        # ((number of detected neurons) * (μm in 1mm2)) / (scaled picture area μm2)
+        img_area_mm2 = (img.shape[0] * img.shape[1] * pixel_size ** 2) / 1_000_000
+        neuron_density_mm2 = (len(neurons_df) ) / img_area_mm2
 
         img_info_list.append({
             "image_ID": file_name,
             "image_dimensions": img.shape,
+            "img_area_mm2": img_area_mm2,
             'pixel_size_um': pixel_size,
             'square_size_classification_um': square_size,
             "edge_threshold_um": edge_threshold_pixels * pixel_size,
@@ -193,6 +199,12 @@ def detect_neurons_tif_cli():
     parser.add_argument('--closeness_threshold', type=int, default=15,
                         help="Minimum separation distance (in μm) between detected objects. Objects closer than this are filtered to retain only one. Set to 0 to disable.")
 
+    parser.add_argument('--square_size', type=float, default=22.7,
+                        help="Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron.")
+
+    parser.add_argument('--min_prob', type=float, default=0.8,
+                        help="Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity.")
+
     parser.add_argument('--plot_results', type=str, default='detailed', choices=['none', 'simple', 'detailed'],
                         help=("Choose the level of result visualization to save: "
                         "'none' disables plotting, "
@@ -205,12 +217,6 @@ def detect_neurons_tif_cli():
 
     parser.add_argument('--save_detections', action='store_true', default=False,
                         help="If set, saves a CSV file containing the coordinates of detected neurons.")
-
-    parser.add_argument('--square_size', type=float, default=22.7,
-                        help="Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron.")
-
-    parser.add_argument('--min_prob', type=float, default=0.8,
-                        help="Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity.")
 
     parser.add_argument('--model_name', type=str, default="learner_isneuron_ptdp_vessels",
                         help="Base name of the trained model file used for neuron classification (expects a .pkl file).")

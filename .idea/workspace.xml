@@ -5,16 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c1ac7a7-9e60-494d-8237-85ba2c92b0da" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/neurodetection/scaling.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/neurodetection/setup_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/classify_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/classify_objects.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/debug.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detect_neurons_tif.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neurodetection/detect_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detect_objects.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/neurodetection/detections_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detections_processing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neurodetection/isolate_single_objects.py" beforeDir="false" afterPath="$PROJECT_DIR$/isolate_single_objects.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neurodetection/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/plot_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/plot_output.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/scaling.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/scaling.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/neurodetection/setup_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/setup_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,13 +186,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/neurodetection/detect_neurons_tif.py</url>
-          <line>141</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">

@@ -1,13 +1,14 @@
 from pathlib import Path
 
-def validate_inputs(input_dir, output_dir, use_hematoxylin, save_detections, pixel_size,
-                    closeness_threshold, square_size, plot_max_dim, plot_results):
+def validate_inputs(input_dir, output_dir, use_hematoxylin, square_size, plot_max_dim, min_prob, save_detections, pixel_size,
+                    closeness_threshold, plot_results):
 
     if not type(input_dir) or not type(output_dir) is str:
         raise TypeError("Only strings in input and output are allowed")
 
     if not type(use_hematoxylin) is bool:
         raise TypeError("use_hematoxylin must be True or False")
+
     if not type(save_detections) is bool:
         raise TypeError("save_detections must be True or False")
 
@@ -20,10 +21,12 @@ def validate_inputs(input_dir, output_dir, use_hematoxylin, save_detections, pix
     if not isinstance(square_size, float) or square_size <= 0:
         raise TypeError("square_size must be a positive float.")
 
+    if not isinstance(min_prob, float) or min_prob <0.05 or min_prob>=1:
+        raise TypeError("min_prob must be a float greater than or equal to 0.5 and less than 1.")
+
     if not isinstance(plot_max_dim, int) or plot_max_dim <= 0:
         raise TypeError("plot_max_dim must be a positive integer.")
 
-    # Enum-like string check
     allowed_plot_options = ("none", "simple", "detailed")
     if plot_results not in allowed_plot_options:
         raise ValueError(f"plot_results must be one of: {', '.join(allowed_plot_options)}.")

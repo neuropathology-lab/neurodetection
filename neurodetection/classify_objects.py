@@ -83,6 +83,8 @@ def classify_is_neuron(objects_df, img, rowname="center_row", colname="center_co
 
                 # Resize to 100x100 pixels
                 img_patch_resized = cv2.resize(img_patch, (100, 100), interpolation=cv2.INTER_LINEAR)
+
+                # Classify
                 pred_class, pred_idx, outputs = model.predict(img_patch_resized)
                 outputs = pd.DataFrame([outputs.tolist()])
 

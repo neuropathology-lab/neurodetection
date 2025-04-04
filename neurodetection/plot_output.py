@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from matplotlib.ticker import FuncFormatter
 plt.ioff()
 
-def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_pixels, edge_threshold_pixels, plot_type = "detailed", max_dim=10):
+
+def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size, pixel_size, edge_threshold_pixels, plot_type, max_dim):
     tab10 = plt.get_cmap('tab10').colors
 
     # Prepare neuron subsets
@@ -12,7 +14,12 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
     img_height, img_width = img.shape[:2]
     aspect_ratio = img_width / img_height
 
+    # Get size of the square size for classification in pixels
+    square_size_pixels = square_size / pixel_size
     half_square = square_size_pixels / 2
+
+    # Change ticks vales from pixels to um
+    formatter = FuncFormatter(lambda value, _: f'{value * pixel_size:.1f}')
 
     if plot_type == "detailed":
 
@@ -32,19 +39,25 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
         # plot with only raw photo
         axs[0].imshow(img)
         axs[0].set_title("Raw photo", fontsize=max_dim*2)
-        axs[0].tick_params(axis='both', which='major', labelsize=max_dim)
+        axs[0].xaxis.set_major_formatter(formatter)
+        axs[0].yaxis.set_major_formatter(formatter)
+        axs[0].tick_params(axis='both', which='major', labelsize=max_dim*2)
 
         # plot with all detected objects
         axs[1].imshow(img)
         axs[1].set_title("All detected objects", fontsize=max_dim*2)
         axs[1].scatter(objects_df["center_col"], objects_df["center_row"], color="r", s = (max_dim*max_dim)/2)
-        axs[1].tick_params(axis='both', which='major', labelsize=max_dim)
+        axs[1].xaxis.set_major_formatter(formatter)
+        axs[1].yaxis.set_major_formatter(formatter)
+        axs[1].tick_params(axis='both', which='major', labelsize=max_dim*2)
 
         # Plot with dynamic-size squares for neurons
         axs[2].imshow(img)
         axs[2].set_title("All detected neurons",
                          fontsize=max_dim*2)
-        axs[2].tick_params(axis='both', which='major', labelsize=max_dim)
+        axs[2].xaxis.set_major_formatter(formatter)
+        axs[2].yaxis.set_major_formatter(formatter)
+        axs[2].tick_params(axis='both', which='major', labelsize=max_dim*2)
 
 
         # Draw orange squares for far neurons
@@ -84,6 +97,9 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
         # Plot with same dynamic-size squares for comparison
         axs[3].imshow(img)
         axs[3].set_title("Detected neurons (final)", fontsize=max_dim*2)
+        axs[3].xaxis.set_major_formatter(formatter)
+        axs[3].yaxis.set_major_formatter(formatter)
+        axs[3].tick_params(axis='both', which='major', labelsize=max_dim*2)
 
         for _, row in neurons.iterrows():
             rect = Rectangle(
@@ -110,7 +126,9 @@ def three_plots_save(img, objects_df, neurons_df, output_plot_path, square_size_
         fig, ax = plt.subplots()
         ax.imshow(img)
         ax.set_title("Detected neurons", fontsize=max_dim*2)
-        ax.tick_params(axis='both', which='major', labelsize=max_dim)
+        ax.xaxis.set_major_formatter(formatter)
+        ax.yaxis.set_major_formatter(formatter)
+        ax.tick_params(axis='both', which='major', labelsize=max_dim*2)
 
         for _, row in neurons.iterrows():
             rect = Rectangle(

@@ -24,4 +24,11 @@ setup(
             'detect_neurons_tif = neurodetection.detect_neurons_tif:detect_neurons_tif_cli'
         ]
     },
+    author_email='your@email.com', # add neuropatho email
+    description='Detects neurons in images of immunohistochemically stained tissue sections.',
+    url='https://github.com/yourusername/neurodetection', # add neropatho username
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License', # Change licence
+    ],
 )
