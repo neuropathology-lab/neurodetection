@@ -5,24 +5,7 @@ Created on Fri Nov 22 10:22:16 2024
 @author: u0146458
 """
 from skimage.color import rgb2hed, hed2rgb
-import imageio
 import numpy as np
-
-def convertCziToUsableArray(czi):
-    # not used
-    img, shp = czi.read_image(c=0)
-    img = img.astype(np.float32)
-    if img.ndim == 6:
-        img = img[0,0,0,:,:,:] 
-
-    return img
-
-def convertTifToUsableArray(tif):
-
-    img = imageio.v2.imread(tif)
-    img = np.array(img).astype(np.float32)
-    
-    return img
 
 def normImage(img):
 

@@ -7,8 +7,16 @@ Created on Mon Nov 18 11:23:47 2024
 from scipy.spatial import KDTree
 from sklearn.cluster import DBSCAN
 import numpy as np
+import math
 
-def getObjectsEdges(objects_df, img, edge_threshold_pixels=0):
+def edgeThreshold(square_size, pixel_size):
+
+    edge_threshold_pixels = math.ceil((square_size / 2) / pixel_size)
+    edge_threshold_um = edge_threshold_pixels * pixel_size
+
+    return edge_threshold_pixels, edge_threshold_um
+
+def getObjectsEdges(objects_df, img, edge_threshold_pixels):
 
     objects_edges_mask = (objects_df["center_row"] > edge_threshold_pixels) & \
                      (objects_df["center_row"] < img.shape[0] - edge_threshold_pixels) & \
