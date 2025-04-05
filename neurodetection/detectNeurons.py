@@ -12,11 +12,10 @@ import pandas as pd
 import argparse
 import gc
 from pathlib import Path
-import math
-from .setup_utils import validateInputs, checkFolders, checkImg, checkModel, makeOutputFolders
+from .setup_utils import validateInputs, checkFolders, checkTIF, checkModel, makeOutputFolders, checkImg
 from .scaling import getScaling
 from .load_model import loadIsNeuron
-from .detections_processing import getObjectsEdges, getTooCloseObjectsMain
+from .detections_processing import edgeThreshold, getObjectsEdges, getTooCloseObjectsMain
 from .process_image import processImage, separateHematoxylin
 from .load_image import loadImage
 from .detect_objects import objectDetectionMain
@@ -27,7 +26,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
                         use_hematoxylin = False, closeness_threshold = int(15),
                         square_size = float(22.7), min_prob = 0.8,
                         plot_results = "detailed", plot_max_dim = int(10),
-                        save_detections = True, model_name = "learner_isneuron_ptdp_vessels"):
+                        save_detections = False, model_name = "learner_isneuron_ptdp_vessels"):
 
     # Additional parameters (can be changed in case of a custom model)
     original_pixel_size     = 0.227 # Pixel size (in µm) of images used during model training; used as a rescaling factor
@@ -47,16 +46,15 @@ def detectNeurons(input_dir, output_dir, pixel_size,
     # Make sure that the input/output folders exist
     checkFolders(input_dir, output_dir)
 
-    # Check if images in input folder exist, currently, the package only supports RGB .tif image files
-    img_ext = '.tif'
-    checkImg(input_dir, img_ext)
+    # Check if images in input folder exist, currently, the package only supports RGB .tif/.tiff image files
+    img_ext = checkTIF(input_dir)
 
     # Create output folders
     output_dir_info, output_dir_plots, output_dir_detections = (
         makeOutputFolders(output_dir, plot_results, save_detections))
 
     # Calculate minimum edge distance for which detections need to be discarded to do classification
-    edge_threshold_pixels =  math.ceil((square_size / 2) / pixel_size)
+    edge_threshold_pixels, edge_threshold_um = edgeThreshold(square_size, pixel_size)
 
     # Calculate scaling parameter for classification square size:
     scaling_factor = (
@@ -75,10 +73,13 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         print(f"Started processing: {file_name} [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
 
         # Load image
-        img = loadImage(img_path, img_ext)
-
+        img = loadImage(img_path)
+        checkImg(img, pixel_size, square_size)
+        if (img.shape[0]*pixel_size < 50) | (img.shape[1]*pixel_size < 50) | (img.shape[0]*pixel_size < square_size) | (img.shape[1]*pixel_size < square_size):
+            raise TypeError("plot_max_dim must be a positive integer.")
         # Process image
         img = processImage(img)
+        checkImg(img, pixel_size, square_size)
 
         # Separate stains and get only hematoxylin channel if necessary
         if use_hematoxylin:
@@ -115,7 +116,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
                 "image_dimensions": img.shape,
                 'pixel_size_um': pixel_size,
                 'square_size_classification_um': square_size,
-                "edge_threshold_um": edge_threshold_pixels * pixel_size,
+                "edge_threshold_um": edge_threshold_um,
                 "closeness_threshold_um": closeness_threshold,
                 "model": model_name,
                 "date": now.strftime('%Y-%m-%d'),
@@ -139,7 +140,8 @@ def detectNeurons(input_dir, output_dir, pixel_size,
             if (img_ext==".tif"):
                 img = img[ :, :, ::-1]
             output_path_plots = output_dir_plots / f"{file_name}_plot.png"
-            threePlotsSave(img, objects_df, neurons_df, output_path_plots, square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
+            threePlotsSave(img, objects_df, neurons_df, output_path_plots,
+                           square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
 
         # Remove the neurons that were considered too close to other neurons and neurons on the edges
         neurons_df = neurons_df[(neurons_df['close_objects'] == False) & (neurons_df['objects_edges'] == False)]
@@ -155,7 +157,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
             "img_area_mm2": img_area_mm2,
             'pixel_size_um': pixel_size,
             'square_size_classification_um': square_size,
-            "edge_threshold_um": edge_threshold_pixels * pixel_size,
+            "edge_threshold_um": edge_threshold_um,
             "closeness_threshold_um": closeness_threshold,
             "model": model_name,
             "date" : datetime.datetime.now().strftime('%Y-%m-%d'),
