@@ -7,7 +7,7 @@ Object detection is performed by identifying local maxima through Gaussian smoot
 
 ## Installation (for now)
 ```bash
-cd dir/to/neurodetection_pkg
+cd dir/to/neurodetection
 pip install -e .
 ```
 
@@ -19,7 +19,7 @@ from neurodetection import detectNeurons
 input_dir = path / to / images
 output_dir = path / for / save
 pixel_size = 0.224  # in micrometers
-detect_neurons_tif(input_dir, output_dir, pixel_size)
+detectNeurons(input_dir, output_dir, pixel_size)
 ```
 ## Parameters detect_neurons_tif
 * **`input_dir`** Path to the input directory containing the images (.tif) for analysis. (required)
