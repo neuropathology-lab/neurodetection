@@ -41,6 +41,15 @@ This script generates three types of results, each stored in separate subfolders
 - All images within a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. While image dimensions (width × height) may vary within a batch, the pixel resolution must remain consistent. The model was trained on images acquired at 200× magnification but performs reliably on images taken at magnifications between 100× and 400×. Processing speed depends not only on the image dimensions but also on the magnification level, as images are internally rescaled to match the training conditions.
 - Inspect the images for a severe shadow or tissue tears, as these artifacts can affect object detection accuracy. If possible, avoid including large blood vessels and large DAB-stained lesions.
 
+## Plotting results
+Example of `detailed` results plot:
+![neurodetection_detailed_plot](https://github.com/user-attachments/assets/84e368b2-7ebd-4615-89a8-6932c454123b)
+- The first subplot displays the original image (or only the hematoxylin channel if `use_hematoxylin`=True), with a representation of the square size used for classification plotted on it.
+- The third subplot highlights all objects classified as neurons. The dotted line indicates the distance from the edge within which neurons are removed. **Yellow squares** indicate detections that will be removed either due to their proximity to other objects or because they are located too close to the edge of the image. Neurons within **orange squares** will be retained. 
+- The last subplot presents the cleaned results, which will be saved and used to calculate density.
+
+`simple` plotting will save only the last subplot. 
+
 ## Informations in results .csv
 `image_ID`: Name of the image file.
 `image_dimensions`: Width and height of the image (in pixels).
@@ -55,15 +64,6 @@ This script generates three types of results, each stored in separate subfolders
 `no_detected_objects`: Total number of detected objects in the image.
 `no_neurons`: Number of detected neurons in the image after cleaning.
 `neuron_density_mm2`: Density of neurons per square millimeter.
-
-## Plotting results
-Example of "detailed" results plot:
-![neurodetection_detailed_plot](https://github.com/user-attachments/assets/84e368b2-7ebd-4615-89a8-6932c454123b)
-- The first subplot displays the original image (or only the hematoxylin channel if `use_hematoxylin`=True), with a representation of the square size used for classification plotted on it.
-- The third subplot highlights all objects classified as neurons. **Yellow squares** indicate detections that will be removed either due to their proximity to other objects or because they are located at the edges of the image. Neurons within **orange squares** will be retained.
-- The last subplot presents the cleaned results, which will be saved and used to calculate density.
-
-"simple" plotting will save only the last subplot. 
 
 ## Examples of parameter adjustments to improve neuron detection:
 ![neurodetection_use_hematoxylin](https://github.com/user-attachments/assets/ffc6bec2-52f8-4b95-a5d5-3d185324fa28)
