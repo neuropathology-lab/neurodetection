@@ -1,5 +1,5 @@
 # Neurodetection
-Detects pyramidal neurons in images of immunohistochemically stained human brain tissue sections. 
+Detects pyramidal neurons in IHC/HE stained human brain tissue sections.
 
 The script takes as input a folder of microscopy images in RGB `.tif` format and outputs the number of detected neurons, their positions, and a plot showing the detected objects and neurons overlaid on the original images. To run the script, information about the pixel size (in micrometers) is required. The images must be stained with either DAB + hematoxylin or hematoxylin-eosin.
 
