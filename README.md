@@ -1,9 +1,11 @@
 # Neurodetection
-Detects neurons in images of immunohistochemically stained tissue sections. 
+Detects pyramidal neurons in images of immunohistochemically stained human brain tissue sections. 
 
 The script takes as input a folder of microscopy images in RGB `.tif` format and outputs the number of detected neurons, their positions, and a plot showing the detected objects and neurons overlaid on the original images. To run the script, information about the pixel size (in micrometers) is required. The images must be stained with either DAB + hematoxylin or hematoxylin-eosin.
 
-Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network fine-tuned with 31,273 neuron and 91,528 non-neuron samples.
+Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network fine-tuned with 31,273 neuron and 91,528 non-neuron samples. 
+
+(!) The classifier was trained and validated on human hippocampal pyramidal neurons. Detection of other neuron types or neurons from other regions should be performed with caution.
 
 ## Installation (for now)
 ```bash
