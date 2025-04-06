@@ -1,7 +1,7 @@
 # Neurodetection
 Detects neurons in images of immunohistochemically stained tissue sections. 
 
-The script takes as input a folder of microscopy images in RGB .tif format and outputs the number of detected neurons, their positions, and a plot with detected objects and neurons overlaid on the original images. To run the script, information about pixel size in micrometers is required.
+The script takes as input a folder of microscopy images in RGB .tif format and outputs the number of detected neurons, their positions, and a plot with detected objects and neurons overlaid on the original images. To run the script, information about images pixel size in micrometers is required. Images needs to be DAB + hematoxylin stained or hematoxylin-eoasin stained and saved as RGB .tif.
 
 Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network fine-tuned with 31,273 neuron and 91,528 non-neuron samples.
 
@@ -35,6 +35,10 @@ This script generates three types of results, each stored in separate subfolders
 * **`plot_max_dim`** Maximum dimension (in inches) of the output plot. Increase this value to generate higher-resolution images. Takes only integers. (default: 10)
 * **`save_detections`** If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 * **`model_name`** Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
+
+Examples of modifying paramaters to improve neuron detection
+![neurodetection_square_size](https://github.com/user-attachments/assets/3beeb843-d03b-4b8a-8c8b-875138879020)
+
 
 ## Before running the script:
 Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
