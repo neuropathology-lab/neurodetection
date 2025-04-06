@@ -83,7 +83,7 @@ Example of `detailed` results plot:
 This package was developed at the Laboratory of Neuropathology, KU Leuven, as part of a research initiative on risk factors in Alzheimer’s disease. 
 It was conducted in collaboration with the Laboratory of Multi-omic Integrative Bioinformatics and the Laboratory of Neurobiology (KU Leuven).
 
-We acknowledge Sandra Tome for her valuable feedback and support in validating the classification algorithm.
+We acknowledge dr. Sandra Tome for her valuable feedback and support in validating the classification algorithm.
 
 We also wish to thank the broader open-source community, in particular the developers and maintainers of foundational packages such as NumPy, scikit-image, and related tools, upon which this project depends.
 
