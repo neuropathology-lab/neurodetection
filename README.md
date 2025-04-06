@@ -74,3 +74,19 @@ Example of `detailed` results plot:
 *Changing the `square_size` will most likely require adjusting the `closeness_threshold` as well.
 ![neurodetection_min_prob](https://github.com/user-attachments/assets/6a2f1a1e-e823-4254-96d0-a906d39e0cc9)
 
+## Authors
+- Klara Gawor — Conceptualization and development of the package  
+- Geethika Arekatla — Development and training of the classification algorithm  
+- David Wouters — Co-development of the package and conceptualization of the object detection module  
+
+## Acknowledgements
+This package was developed at the Laboratory of Neuropathology, KU Leuven, as part of a research initiative on risk factors in Alzheimer’s disease. 
+It was conducted in collaboration with the Laboratory of Multi-omic Integrative Bioinformatics and the Laboratory of Neurobiology (KU Leuven).
+
+We acknowledge Sandra Tome for her valuable feedback and support in validating the classification algorithm.
+
+We also wish to thank the broader open-source community, in particular the developers and maintainers of foundational packages such as NumPy, scikit-image, and related tools, upon which this project depends.
+
+## License
+
+## Citation
