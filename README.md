@@ -36,13 +36,20 @@ This script generates three types of results, each stored in separate subfolders
 * **`save_detections`** If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 * **`model_name`** Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
 
-Examples of modifying paramaters to improve neuron detection
-![neurodetection_square_size](https://github.com/user-attachments/assets/3beeb843-d03b-4b8a-8c8b-875138879020)
-
-
 ## Before running the script:
 Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
 
 All images within a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. While image dimensions (width × height) may vary within a batch, the pixel resolution must remain consistent. The model was trained on images acquired at 200× magnification but performs reliably on images taken at magnifications between 100× and 400×. Processing speed depends not only on the image dimensions but also on the magnification level, as images are internally rescaled to match the training conditions.
 
 Inspect the images for a severe shadow or tissue tears, as these artifacts can affect object detection accuracy. If possible, avoid including large blood vessels.
+
+## Example of detailed results plot:
+![neurodetection_detailed_plot](https://github.com/user-attachments/assets/84e368b2-7ebd-4615-89a8-6932c454123b)
+Simple results plot only returns the last right lower corned final subplot.
+
+## Examples of modifying paramaters to improve neuron detection:
+![neurodetection_use_hematoxylin](https://github.com/user-attachments/assets/ffc6bec2-52f8-4b95-a5d5-3d185324fa28)
+![neurodetection_closeness_threshold](https://github.com/user-attachments/assets/0d0f97d2-b488-4223-b911-49d695fd8f53)
+![neurodetection_square_size](https://github.com/user-attachments/assets/a105040a-b196-4739-8a1d-5f13d3cf725b)
+![neurodetection_min_prob](https://github.com/user-attachments/assets/6a2f1a1e-e823-4254-96d0-a906d39e0cc9)
+
