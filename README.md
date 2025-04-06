@@ -1,7 +1,7 @@
 # Neurodetection
 Detects neurons in images of immunohistochemically stained tissue sections. 
 
-The script takes as input a folder of microscopy images in RGB .tif format and outputs the number of detected neurons, their positions, and a plot with detected objects and neurons overlaid on the original images. To run the script, information about images pixel size in micrometers is required. Images needs to be DAB + hematoxylin stained or hematoxylin-eoasin stained and saved as RGB .tif.
+The script takes as input a folder of microscopy images in RGB `.tif` format and outputs the number of detected neurons, their positions, and a plot showing the detected objects and neurons overlaid on the original images. To run the script, information about the pixel size (in micrometers) is required. The images must be stained with either DAB + hematoxylin or hematoxylin-eosin.
 
 Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network fine-tuned with 31,273 neuron and 91,528 non-neuron samples.
 
@@ -36,18 +36,36 @@ This script generates three types of results, each stored in separate subfolders
 * **`save_detections`** If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 * **`model_name`** Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
 
-## Before running the script:
-Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
+## Before running the script
+- Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
+- All images within a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. While image dimensions (width × height) may vary within a batch, the pixel resolution must remain consistent. The model was trained on images acquired at 200× magnification but performs reliably on images taken at magnifications between 100× and 400×. Processing speed depends not only on the image dimensions but also on the magnification level, as images are internally rescaled to match the training conditions.
+- Inspect the images for a severe shadow or tissue tears, as these artifacts can affect object detection accuracy. If possible, avoid including large blood vessels and large DAB-stained lesions.
 
-All images within a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. While image dimensions (width × height) may vary within a batch, the pixel resolution must remain consistent. The model was trained on images acquired at 200× magnification but performs reliably on images taken at magnifications between 100× and 400×. Processing speed depends not only on the image dimensions but also on the magnification level, as images are internally rescaled to match the training conditions.
+## Informations in results .csv
+`image_ID`: Name of the image file.
+`image_dimensions`: Width and height of the image (in pixels).
+`img_area_mm2`: Area of the image in square millimeters.
+`pixel_size_um`: Pixel size of the image in micrometers (µm).
+`square_size_classification_um`: Side length of the square used for classification (in µm).
+`edge_threshold_um`: Distance from the image edge within which neurons were discarded (in µm).
+`closeness_threshold_um`: Minimum distance between neurons; all but one neuron were discarded if located within this distance (in µm).
+`model`: Name of the classification model used.
+`date`: Date and time of processing.
+`minimum_probability`: Minimum probability required for an object to be considered a neuron.
+`no_detected_objects`: Total number of detected objects in the image.
+`no_neurons`: Number of detected neurons in the image after cleaning.
+`neuron_density_mm2`: Density of neurons per square millimeter.
 
-Inspect the images for a severe shadow or tissue tears, as these artifacts can affect object detection accuracy. If possible, avoid including large blood vessels.
-
-## Example of detailed results plot:
+## Plotting results
+Example of "detailed" results plot:
 ![neurodetection_detailed_plot](https://github.com/user-attachments/assets/84e368b2-7ebd-4615-89a8-6932c454123b)
-Simple results plot only returns the last right lower corned final subplot.
+- The first subplot displays the original image (or only the hematoxylin channel if `use_hematoxylin`=True), with a representation of the square size used for classification plotted on it.
+- The third subplot highlights all objects classified as neurons. **Yellow squares** indicate detections that will be removed either due to their proximity to other objects or because they are located at the edges of the image. Neurons within **orange squares** will be retained.
+- The last subplot presents the cleaned results, which will be saved and used to calculate density.
 
-## Examples of modifying paramaters to improve neuron detection:
+"simple" plotting will save only the last subplot. 
+
+## Examples of parameter adjustments to improve neuron detection:
 ![neurodetection_use_hematoxylin](https://github.com/user-attachments/assets/ffc6bec2-52f8-4b95-a5d5-3d185324fa28)
 ![neurodetection_closeness_threshold](https://github.com/user-attachments/assets/0d0f97d2-b488-4223-b911-49d695fd8f53)
 ![neurodetection_square_size](https://github.com/user-attachments/assets/a105040a-b196-4739-8a1d-5f13d3cf725b)
