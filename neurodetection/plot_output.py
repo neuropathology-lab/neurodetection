@@ -56,7 +56,7 @@ def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
         ax.text(
             square_x + square_size_px / 2,
             square_y - 0.01 * img_height,
-            f"{square_size:.0f} µm",
+            f"{square_size:.1f} µm",
             color='black',
             ha='center',
             va='bottom',
