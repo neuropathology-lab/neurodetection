@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1c1ac7a7-9e60-494d-8237-85ba2c92b0da" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neurodetection/detectNeurons.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/detectNeurons.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/neurodetection/plot_output.py" beforeDir="false" afterPath="$PROJECT_DIR$/neurodetection/plot_output.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +24,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
