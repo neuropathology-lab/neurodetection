@@ -135,7 +135,6 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         neurons_df = getTooCloseObjectsMain(neurons_df, closeness_threshold, pixel_size)
 
         # Plot the detections if requested
-        # Gives three plots: raw img, img with detected objects, and img with detected neurons after processing
         if plot_results != "none":
             if (img_ext==".tif"):
                 img = img[ :, :, ::-1]
