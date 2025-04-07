@@ -75,9 +75,9 @@ Example of `detailed` results plot:
 ![neurodetection_min_prob](https://github.com/user-attachments/assets/6a2f1a1e-e823-4254-96d0-a906d39e0cc9)
 
 ## Authors
-- Klara Gawor — Conceptualization and development of the package  
+- Klara Gawor — Conceptualization and development of the package; collection of training data for the classification algorithm  
 - Geethika Arekatla — Development and training of the classification algorithm  
-- David Wouters — Co-development of the package and conceptualization of the object detection module  
+- David Wouters — Co-development of the package and the classification algorithm
 
 ## Acknowledgements
 This package was developed at the Laboratory of Neuropathology, KU Leuven, as part of a research initiative on risk factors in Alzheimer’s disease. 
