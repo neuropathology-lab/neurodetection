@@ -1,7 +1,7 @@
 # Neurodetection
-Detects pyramidal neurons in images of immunohistochemically stained human brain tissue sections. 
+Detects pyramidal neurons in IHC/HE stained human brain tissue sections.
 
-The script takes as input a folder of microscopy images in RGB `.tif` format and outputs the number of detected neurons, their positions, and a plot showing the detected objects and neurons overlaid on the original images. To run the script, information about the pixel size (in micrometers) is required. The images must be stained with either DAB + hematoxylin or hematoxylin-eosin.
+The script takes as input a folder of microscopy images in RGB `.tif` format and outputs the number of detected neurons, their positions, and a plot showing the detected objects and neurons overlaid on the original images. To run the script, information about the pixel size (in micrometers) is required. The images must be stained with either DAB + hematoxylin or HE.
 
 Object detection is performed by identifying local maxima through Gaussian smoothing and adaptive thresholding, followed by clustering nearby peaks into distinct objects using DBSCAN. The centroids of these objects are then used to extract square regions (22.7μm2) around each object. Each region is classified as either a neuron or non-neuron using a ResNet-34 convolutional neural network fine-tuned with 31,273 neuron and 91,528 non-neuron samples. 
 
@@ -38,6 +38,20 @@ This script generates three types of results, each stored in separate subfolders
 * **`save_detections`** If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 * **`model_name`** Name of the trained model file used for neuron classification (expects a .pkl file). (default: build-in model)
 
+## Information in the results .csv
+`image_ID`: Name of the image file.
+`image_dimensions`: Width and height of the image (in pixels).
+`pixel_size_um`: Pixel size of the image in micrometers (µm).
+`square_size_classification_um`: Side length of the square used for classification (in µm).
+`edge_threshold_um`: Distance from the image edge within which neurons were discarded (in µm).
+`closeness_threshold_um`: Minimum distance between neurons; all but one neuron were discarded if located within this distance (in µm).
+`model`: Name of the classification model used.
+`date`: Date and time of processing.
+`minimum_probability`: Minimum probability required for an object to be considered a neuron.
+`no_detected_objects`: Total number of detected objects in the image.
+`no_neurons`: Number of detected neurons in the image after cleaning.
+`neuron_density_mm2`: Density of neurons per square millimeter.
+
 ## Before running the script
 - Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
 - All images within a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. Pixel size refers to the physical dimensions of a single pixel in a microscopic image. While image dimensions (width × height) may vary within a batch, the pixel resolution must remain consistent. The model was trained on images acquired at 200× magnification but performs reliably on images taken at magnifications between 100× and 400×. Processing speed depends not only on the image dimensions but also on the magnification level, as images are internally rescaled to match the training conditions.
@@ -53,20 +67,6 @@ Example of `detailed` results plot:
 
 `simple` plotting will save only the last subplot. 
 
-## Information in the results .csv
-`image_ID`: Name of the image file.
-`image_dimensions`: Width and height of the image (in pixels).
-`pixel_size_um`: Pixel size of the image in micrometers (µm).
-`square_size_classification_um`: Side length of the square used for classification (in µm).
-`edge_threshold_um`: Distance from the image edge within which neurons were discarded (in µm).
-`closeness_threshold_um`: Minimum distance between neurons; all but one neuron were discarded if located within this distance (in µm).
-`model`: Name of the classification model used.
-`date`: Date and time of processing.
-`minimum_probability`: Minimum probability required for an object to be considered a neuron.
-`no_detected_objects`: Total number of detected objects in the image.
-`no_neurons`: Number of detected neurons in the image after cleaning.
-`neuron_density_mm2`: Density of neurons per square millimeter.
-
 ## Examples of parameter adjustments to improve neuron detection:
 ![neurodetection_use_hematoxylin](https://github.com/user-attachments/assets/ffc6bec2-52f8-4b95-a5d5-3d185324fa28)
 ![neurodetection_closeness_threshold](https://github.com/user-attachments/assets/0d0f97d2-b488-4223-b911-49d695fd8f53)
@@ -74,3 +74,19 @@ Example of `detailed` results plot:
 *Changing the `square_size` will most likely require adjusting the `closeness_threshold` as well.
 ![neurodetection_min_prob](https://github.com/user-attachments/assets/6a2f1a1e-e823-4254-96d0-a906d39e0cc9)
 
+## Authors
+- Klara Gawor — Conceptualization and development of the package; collection of training data for the classification algorithm  
+- Geethika Arekatla — Development and training of the classification algorithm  
+- David Wouters — Co-development of the package and the classification algorithm
+
+## Acknowledgements
+This package was developed at the Laboratory of Neuropathology, KU Leuven, as part of a research initiative on risk factors in Alzheimer’s disease. 
+It was conducted in collaboration with the Laboratory of Multi-omic Integrative Bioinformatics (https://github.com/sifrimlab) and the Laboratory of Neurobiology (KU Leuven).
+
+We acknowledge dr. Sandra Tome for her valuable feedback and support in validating the classification algorithm.
+
+We also wish to thank the broader open-source community, in particular the developers and maintainers of foundational packages such as NumPy, scikit-image, and related tools, upon which this project depends.
+
+## License
+
+## Citation
