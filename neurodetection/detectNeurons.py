@@ -5,8 +5,7 @@ Created on Mon Nov 25 10:23:18 2024
 @author: u0146458
 """
 import datetime
-now = datetime.datetime.now()
-print(f"Loading packages [{now.strftime('%Y-%m-%d %H:%M:%S')}]")
+print(f"Loading packages [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
 
 import pandas as pd
 import argparse
