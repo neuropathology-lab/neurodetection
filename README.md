@@ -24,16 +24,6 @@ pixel_size = 0.224  # in micrometers
 detectNeurons(input_dir, output_dir, pixel_size)
 ```
 
-## Plotting results
-Example of `detailed` results plot:
-![neurodetection_detailed_plot](https://github.com/user-attachments/assets/84e368b2-7ebd-4615-89a8-6932c454123b)
-- The first subplot displays the original image (or only the hematoxylin channel if `use_hematoxylin`=True), with a representation of the square size used for classification plotted on it.
-- The second subplot shows all detected objects.
-- The third subplot highlights all objects classified as neurons. The dotted line indicates the distance from the edge within which neurons are removed. **Yellow squares** indicate detections that will be removed either due to their proximity to other objects or because they are located too close to the edge of the image. Neurons within **orange squares** will be retained. 
-- The last subplot presents the cleaned results, which will be saved and used to calculate density.
-
-`simple` plotting will save only the last subplot. 
-
 ## Parameters detectNeurons
 * **`input_dir`** Path to the input directory containing the images (.tif) for analysis. (required)
 * **`output_dir`** Path to the output directory where results will be saved. (required)
@@ -66,6 +56,16 @@ This script generates three types of results, each stored in separate subfolders
 - Ensure the photos are in the correct format. This script is optimized for RGB .tif images (these can be easily generated using ImageJ: Image → Type → RGB Color, then File → Save As → Tiff).
 - All images within a single batch must have the same pixel size in micrometers (µm), which corresponds to the magnification level. Pixel size refers to the physical dimensions of a single pixel in a microscopic image. While image dimensions (width × height) may vary within a batch, the pixel resolution must remain consistent. The model was trained on images acquired at 200× magnification but performs reliably on images taken at magnifications between 100× and 400×. Processing speed depends not only on the image dimensions but also on the magnification level, as images are internally rescaled to match the training conditions.
 - Inspect the images for shadows or tissue tears, as these artifacts can affect the accuracy of object detection. If possible, avoid including large blood vessels and densely DAB-stained objects.
+
+## Plotting results
+Example of `detailed` results plot:
+![neurodetection_detailed_plot](https://github.com/user-attachments/assets/84e368b2-7ebd-4615-89a8-6932c454123b)
+- The first subplot displays the original image (or only the hematoxylin channel if `use_hematoxylin`=True), with a representation of the square size used for classification plotted on it.
+- The second subplot shows all detected objects.
+- The third subplot highlights all objects classified as neurons. The dotted line indicates the distance from the edge within which neurons are removed. **Yellow squares** indicate detections that will be removed either due to their proximity to other objects or because they are located too close to the edge of the image. Neurons within **orange squares** will be retained. 
+- The last subplot presents the cleaned results, which will be saved and used to calculate density.
+
+`simple` plotting will save only the last subplot. 
 
 ## Examples of parameter adjustments to improve neuron detection:
 ![neurodetection_use_hematoxylin](https://github.com/user-attachments/assets/ffc6bec2-52f8-4b95-a5d5-3d185324fa28)
