@@ -10,7 +10,7 @@ setup(
         "fastai>=2.7.17",
         "imageio>=2.37.0",
         "matplotlib>=3.10.1",
-        "numpy>=1.20.0,<2.1",
+        "numpy>=1.22.0,<2.1",
         "opencv_python>=4.11.0.86",
         "pandas>=2.2.3",
         "Pillow>=11.1.0",
@@ -21,12 +21,12 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'detect_neurons_tif = neurodetection.detect_neurons_tif:detect_neurons_tif_cli'
+            'detectNeurons = neurodetection.detectNeurons:detectNeurons_cli'
         ]
     },
-    author_email='your@email.com', # add neuropatho email
-    description='Detects neurons in images of immunohistochemically stained tissue sections.',
-    url='https://github.com/yourusername/neurodetection', # add neropatho username
+    author_email='neuropathology.kuleuven@outlook.com',
+    description='Detects pyramidal neurons in IHC/HE stained human brain tissue sections.',
+    url='https://github.com/neuropathology-lab/neurodetection',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License', # Change licence
