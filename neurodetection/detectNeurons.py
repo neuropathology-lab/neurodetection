@@ -74,18 +74,20 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         # Load image
         img = loadImage(img_path)
         checkImg(img, pixel_size, square_size)
-        if (img.shape[0]*pixel_size < 50) | (img.shape[1]*pixel_size < 50) | (img.shape[0]*pixel_size < square_size) | (img.shape[1]*pixel_size < square_size):
-            raise TypeError("plot_max_dim must be a positive integer.")
+
         # Process image
         img = processImage(img)
-        checkImg(img, pixel_size, square_size)
 
         # Separate stains and get only hematoxylin channel if necessary
         if use_hematoxylin:
             img = separateHematoxylin(img)
 
         # Object detection
-        objects_df = objectDetectionMain(img, file_name)
+        try:
+            objects_df = objectDetectionMain(img, file_name)
+        except:
+            print("Warning: Object detection failed " + str(file_name) + ". Skipping.")
+            continue
 
         # Check if any objects were detected
         if objects_df.empty:
@@ -105,11 +107,16 @@ def detectNeurons(input_dir, output_dir, pixel_size,
                 raise Exception("Object classification failed for more than one image. Exiting.")
 
         # Increase specificity if necessary
-        neurons_df = changeSpecificity(neurons_df, min_prob)
+        neurons_df = changeSpecificity(neurons_df, min_prob).copy()
 
         # If classification succeeded but no neurons were detected, save the CSV with results and continue
         if neurons_df.empty:
+            plot_results = "no_neurons"
 
+            output_path_plots = output_dir_plots / f"{file_name}_plot.png"
+            threePlotsSave(img, objects_df, neurons_df, output_path_plots,
+                           square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
+            
             img_info_list.append({
                 "image_ID": file_name,
                 "image_dimensions": img.shape,
