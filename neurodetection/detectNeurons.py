@@ -116,7 +116,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
             output_path_plots = output_dir_plots / f"{file_name}_plot.png"
             threePlotsSave(img, objects_df, neurons_df, output_path_plots,
                            square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
-            
+
             img_info_list.append({
                 "image_ID": file_name,
                 "image_dimensions": img.shape,
@@ -143,8 +143,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
 
         # Plot the detections if requested
         if plot_results != "none":
-            if (img_ext==".tif"):
-                img = img[ :, :, ::-1]
+
             output_path_plots = output_dir_plots / f"{file_name}_plot.png"
             threePlotsSave(img, objects_df, neurons_df, output_path_plots,
                            square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
