@@ -81,11 +81,7 @@ def detectObjectsWithDbscan(img, sigma, pixel_density, block_size = 51):
 
 def objectDetectionMain(img, file_name):
 
-    try:
-        blobs = detectObjectsWithDbscan(img, sigma=10, pixel_density=2)
-    except:
-        print("Warning: Object detection failed " + str(file_name) + ". Skipping.")
-        return
+    blobs = detectObjectsWithDbscan(img, sigma=10, pixel_density=2)
 
     # Convert blobs into measured DataFrame
     objects_df = pd.DataFrame({
