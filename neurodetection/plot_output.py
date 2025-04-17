@@ -4,10 +4,13 @@ plt.ioff()
 
 def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
                    square_size, pixel_size, edge_threshold_pixels, plot_type, max_dim=10):
+    img = img[:, :, ::-1]
+
     tab10 = plt.get_cmap('tab10').colors
 
-    neurons = neurons_df[(neurons_df["close_objects"] == False) & (neurons_df["objects_edges"] == False)]
-    neurons_discarded = neurons_df[~neurons_df.index.isin(neurons.index)]
+    if plot_type != "no_neurons":
+        neurons = neurons_df[(neurons_df["close_objects"] == False) & (neurons_df["objects_edges"] == False)]
+        neurons_discarded = neurons_df[~neurons_df.index.isin(neurons.index)]
 
     img_height, img_width = img.shape[:2]
     aspect_ratio = img_width / img_height
@@ -79,6 +82,9 @@ def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
         )
         objects_df_clipped = objects_df[in_bounds]
 
+        # Add reference square in first subplot
+        draw_reference_square(axs[0])
+
         axs[1].scatter(
             objects_df_clipped["center_col"],
             objects_df_clipped["center_row"],
@@ -101,15 +107,39 @@ def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
         )
         axs[2].add_patch(edge_frame)
 
-        # Add reference square in first subplot
-        draw_reference_square(axs[0])
-
     elif plot_type == "simple":
         fig_width = max_dim if aspect_ratio >= 1 else max_dim * aspect_ratio
         fig_height = max_dim / aspect_ratio if aspect_ratio >= 1 else max_dim
         fig, ax = plt.subplots(figsize=(fig_width, fig_height))
         format_axes(ax, "Detected neurons")
         draw_squares(ax, neurons, tab10[1])
+
+    elif plot_type == "no_neurons":
+        subplot_width = min(max_dim, max_dim * aspect_ratio)
+        subplot_height = min(max_dim, max_dim / aspect_ratio)
+        fig, axs = plt.subplots(1, 2, figsize=(2 * subplot_width, subplot_height), constrained_layout=True)
+        axs = axs.flatten()
+
+        titles = ["Original image (with reference classification square)", "All detected objects"]
+        for i, title in enumerate(titles):
+            format_axes(axs[i], title)
+
+        # Clip scatter points to within image bounds
+        in_bounds = (
+            (objects_df["center_col"] >= 0) & (objects_df["center_col"] < img_width) &
+            (objects_df["center_row"] >= 0) & (objects_df["center_row"] < img_height)
+        )
+        objects_df_clipped = objects_df[in_bounds]
+
+        # Add reference square in first subplot
+        draw_reference_square(axs[0])
+
+        axs[1].scatter(
+            objects_df_clipped["center_col"],
+            objects_df_clipped["center_row"],
+            color="FireBrick",
+            s=(max_dim * max_dim) / 2
+        )
 
     fig.savefig(output_path_plots)
     plt.close(fig)
