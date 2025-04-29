@@ -39,6 +39,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
     checkModel(model_name)
 
     # Load a model
+
     print("Loading a classification model" + f" [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
     is_neuron_model = loadIsNeuron(model_name + ".pkl")
 
@@ -72,15 +73,17 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         print(f"Started processing: {file_name} [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
 
         # Load image
-        img = loadImage(img_path)
-        checkImg(img, pixel_size, square_size)
+        org_img = loadImage(img_path)
+        checkImg(org_img, pixel_size, square_size)
 
         # Process image
-        img = processImage(img)
+        org_img = processImage(org_img)
 
         # Separate stains and get only hematoxylin channel if necessary
         if use_hematoxylin:
-            img = separateHematoxylin(img)
+            img = separateHematoxylin(org_img)
+        else:
+            img = org_img
 
         # Object detection
         try:
@@ -114,7 +117,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
             plot_results = "no_neurons"
 
             output_path_plots = output_dir_plots / f"{file_name}_plot.png"
-            threePlotsSave(img, objects_df, neurons_df, output_path_plots,
+            threePlotsSave(org_img, img, objects_df, neurons_df, output_path_plots,
                            square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
 
             img_info_list.append({
@@ -145,7 +148,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         if plot_results != "none":
 
             output_path_plots = output_dir_plots / f"{file_name}_plot.png"
-            threePlotsSave(img, objects_df, neurons_df, output_path_plots,
+            threePlotsSave(org_img, img, objects_df, neurons_df, output_path_plots,
                            square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
 
         # Remove the neurons that were considered too close to other neurons and neurons on the edges
