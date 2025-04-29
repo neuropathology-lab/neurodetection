@@ -76,9 +76,6 @@ def classifyIsNeuron(objects_df, img, rowname="center_row", colname="center_col"
 
                 img_patch = getPatch(img, (row, col, None), radius=scaled_radius, fill=0)
 
-                if img_patch.ndim == 2:
-                    img_patch = np.stack([img_patch] * 3, axis=-1)
-
                 img_patch = (img_patch * 255).astype(np.uint8)
 
                 # Resize to 100x100 pixels
