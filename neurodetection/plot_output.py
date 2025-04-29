@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 plt.ioff()
 
-def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
+def threePlotsSave(org_img, img, objects_df, neurons_df, output_path_plots,
                    square_size, pixel_size, edge_threshold_pixels, plot_type, max_dim=10):
 
     img = img[:, :, ::-1]
+    org_img = org_img[:, :, ::-1]
 
     tab10 = plt.get_cmap('tab10').colors
 
@@ -18,7 +19,7 @@ def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
     square_size_pixels = square_size / pixel_size
     half_square = square_size_pixels / 2
 
-    def format_axes(ax, title):
+    def format_axes(ax, title, img):
         ax.imshow(img)
         ax.set_title(title, fontsize=max_dim * 2.5)
         ax.set_xticks([])
@@ -74,7 +75,10 @@ def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
 
         titles = ["Original image (with reference classification square)", "All detected objects", "Objects classified as neurons", " Final neuron detections"]
         for i, title in enumerate(titles):
-            format_axes(axs[i], title)
+            if i == 0 :
+                format_axes(axs[i], title, org_img)
+            else:
+                format_axes(axs[i], title, img)
 
         # Clip scatter points to within image bounds
         in_bounds = (
@@ -112,7 +116,7 @@ def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
         fig_width = max_dim if aspect_ratio >= 1 else max_dim * aspect_ratio
         fig_height = max_dim / aspect_ratio if aspect_ratio >= 1 else max_dim
         fig, ax = plt.subplots(figsize=(fig_width, fig_height))
-        format_axes(ax, "Detected neurons")
+        format_axes(ax, "Detected neurons", org_img)
         draw_squares(ax, neurons, tab10[1])
 
     elif plot_type == "no_neurons":
@@ -123,7 +127,7 @@ def threePlotsSave(img, objects_df, neurons_df, output_path_plots,
 
         titles = ["Original image (with reference classification square)", "All detected objects"]
         for i, title in enumerate(titles):
-            format_axes(axs[i], title)
+            format_axes(axs[i], title, org_img)
 
         # Clip scatter points to within image bounds
         in_bounds = (
