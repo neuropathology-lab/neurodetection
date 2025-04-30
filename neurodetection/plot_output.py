@@ -127,7 +127,10 @@ def threePlotsSave(org_img, img, objects_df, neurons_df, output_path_plots,
 
         titles = ["Original image (with reference classification square)", "All detected objects"]
         for i, title in enumerate(titles):
-            format_axes(axs[i], title, org_img)
+            if i == 0 :
+                format_axes(axs[i], title, org_img)
+            else:
+                format_axes(axs[i], title, img)
 
         # Clip scatter points to within image bounds
         in_bounds = (
