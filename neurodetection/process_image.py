@@ -26,6 +26,12 @@ def separateHematoxylin(img):
 
     return img_h
 
+def convert_czi_to_img(czi):
+    img, shp = czi.read_image(c=0)
+    img = img.astype(np.float32)
+    img = img.squeeze()
+    return img
+
 def processImage(img):
 
     # Remove empty axis if .czi file
