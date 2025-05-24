@@ -14,32 +14,42 @@ from pathlib import Path
 from .setup_utils import validateInputs, checkFolders, checkTIF, checkModel, makeOutputFolders, checkImg
 from .scaling import getScaling
 from .load_model import loadIsNeuron
-from .detections_processing import edgeThreshold, getObjectsEdges, getTooCloseObjectsMain
-from .process_image import processImage, separateHematoxylin
+from .detections_processing import edgeThresholdMain, getObjectsEdges, getTooCloseObjectsMain
+from .process_image import processImageMain
 from .load_image import loadImage
 from .detect_objects import objectDetectionMain
 from .classify_objects import classifyIsNeuron, changeSpecificity
 from .plot_output import threePlotsSave
 
 def detectNeurons(input_dir, output_dir, pixel_size,
-                        use_hematoxylin = False, closeness_threshold = int(15),
-                        square_size = float(22.7), min_prob = 0.8,
-                        plot_results = "detailed", plot_max_dim = int(10),
-                        save_detections = False, model_name = "learner_isneuron_ptdp_vessels"):
+                  closeness_threshold = int(15),
+                  closeness_method = "random",
+                  edge_threshold_manual = int(10),
+                  square_size = float(22.7),
+                  min_prob = 0.5,
+                  plot_results = "simple",
+                  plot_max_dim = int(10),
+                  apply_blur = False,
+                  save_detections = False,
+                  model_name = "isneuron_ptdp"):
 
     # Additional parameters (can be changed in case of a custom model)
     original_pixel_size     = 0.227 # Pixel size (in µm) of images used during model training; used as a rescaling factor
     original_square_size    = original_pixel_size * 100 # Side length (in µm) of the square region used to train the classifier
 
     # Check users parameters
-    validateInputs(input_dir, output_dir, use_hematoxylin, square_size, plot_max_dim, min_prob, save_detections,
-                    pixel_size, closeness_threshold, plot_results)
+    validateInputs(input_dir, output_dir, square_size, plot_max_dim, min_prob, save_detections, pixel_size,
+                     closeness_threshold, closeness_method, edge_threshold_manual, plot_results)
 
     # Make sure that the model exists
     checkModel(model_name)
 
-    # Load a model
+    if model_name == "isneuron_hematoxylin":
+        use_hematoxylin = True
+    else:
+        use_hematoxylin = False
 
+    # Load a model
     print("Loading a classification model" + f" [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
     is_neuron_model = loadIsNeuron(model_name + ".pkl")
 
@@ -54,11 +64,10 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         makeOutputFolders(output_dir, plot_results, save_detections))
 
     # Calculate minimum edge distance for which detections need to be discarded to do classification
-    edge_threshold_pixels, edge_threshold_um = edgeThreshold(square_size, pixel_size)
+    edge_threshold_pixels, edge_threshold_um = edgeThresholdMain(edge_threshold_manual, pixel_size, square_size)
 
     # Calculate scaling parameter for classification square size:
-    scaling_factor = (
-        getScaling(original_pixel_size, pixel_size, original_square_size, square_size))
+    scaling_factor = getScaling(original_pixel_size, pixel_size, original_square_size, square_size)
 
     # Process each photo in the input directory
     print("Processing photos from " + input_dir + f" [{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]")
@@ -77,13 +86,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         checkImg(org_img, pixel_size, square_size)
 
         # Process image
-        org_img = processImage(org_img)
-
-        # Separate stains and get only hematoxylin channel if necessary
-        if use_hematoxylin:
-            img = separateHematoxylin(org_img)
-        else:
-            img = org_img
+        img = processImageMain(org_img, use_hematoxylin, apply_blur)
 
         # Object detection
         try:
@@ -123,11 +126,14 @@ def detectNeurons(input_dir, output_dir, pixel_size,
             img_info_list.append({
                 "image_ID": file_name,
                 "image_dimensions": img.shape,
-                'pixel_size_um': pixel_size,
-                'square_size_classification_um': square_size,
+                "pixel_size_um": pixel_size,
+                "square_size_classification_um": square_size,
                 "edge_threshold_um": edge_threshold_um,
+                "closeness_method": closeness_method,
                 "closeness_threshold_um": closeness_threshold,
+                "use_hematoxylin": use_hematoxylin,
                 "model": model_name,
+                "apply_blur": apply_blur,
                 "date": datetime.datetime.now().strftime('%Y-%m-%d'),
                 "minimum_probability": min_prob,
                 "no_detected_objects": len(objects_df["center_row"].round().astype(int).values),
@@ -142,14 +148,14 @@ def detectNeurons(input_dir, output_dir, pixel_size,
         neurons_df.loc[:, "objects_edges"] = getObjectsEdges(neurons_df, img, edge_threshold_pixels=edge_threshold_pixels)
 
         # Remove neuron detections that are too close to each other (only for detection not on the edges)
-        neurons_df = getTooCloseObjectsMain(neurons_df, closeness_threshold, pixel_size)
+        neurons_df = getTooCloseObjectsMain(neurons_df, closeness_threshold, closeness_method, pixel_size)
 
         # Plot the detections if requested
         if plot_results != "none":
 
             output_path_plots = output_dir_plots / f"{file_name}_plot.png"
             threePlotsSave(org_img, img, objects_df, neurons_df, output_path_plots,
-                           square_size, pixel_size, edge_threshold_pixels, plot_results, plot_max_dim)
+                           square_size, pixel_size, edge_threshold_pixels, plot_results, use_hematoxylin, plot_max_dim)
 
         # Remove the neurons that were considered too close to other neurons and neurons on the edges
         neurons_df = neurons_df[(neurons_df['close_objects'] == False) & (neurons_df['objects_edges'] == False)]
@@ -166,7 +172,10 @@ def detectNeurons(input_dir, output_dir, pixel_size,
             'square_size_classification_um': square_size,
             "edge_threshold_um": edge_threshold_um,
             "closeness_threshold_um": closeness_threshold,
+            "closeness_method": closeness_method,
+            "use_hematoxylin": use_hematoxylin,
             "model": model_name,
+            "apply_blur": apply_blur,
             "date" : datetime.datetime.now().strftime('%Y-%m-%d'),
             "minimum_probability": min_prob,
             "no_detected_objects": len(objects_df),
@@ -202,9 +211,6 @@ def detectNeurons_cli():
     parser.add_argument('pixel_size', type=float, required=True,
                         help="Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal.")
 
-    parser.add_argument('--use_hematoxylin', action='store_true', default=True,
-                        help="If set, isolates the hematoxylin channel from IHC-stained images before detection.")
-
     parser.add_argument('--closeness_threshold', type=int, default=15,
                         help="Minimum separation distance (in μm) between detected objects. Objects closer than this are filtered to retain only one. Set to 0 to disable.")
 
@@ -213,6 +219,9 @@ def detectNeurons_cli():
 
     parser.add_argument('--min_prob', type=float, default=0.8,
                         help="Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity.")
+
+    parser.add_argument('--apply_blur', action='store_true', default=False,
+                        help="If set, adds median blur with k size 5. Use it when having high contrast .")
 
     parser.add_argument('--plot_results', type=str, default='detailed', choices=['none', 'simple', 'detailed'],
                         help=("Choose the level of result visualization to save: "
