@@ -9,10 +9,26 @@ from sklearn.cluster import DBSCAN
 import numpy as np
 import math
 
-def edgeThreshold(square_size, pixel_size):
+def edgeThresholdAutomatic(square_size, pixel_size):
 
     edge_threshold_pixels = math.ceil((square_size / 2) / pixel_size)
     edge_threshold_um = edge_threshold_pixels * pixel_size
+
+    return edge_threshold_pixels, edge_threshold_um
+
+def edgeThresholdManual(edge_threshold_manual, pixel_size):
+
+    edge_threshold_pixels = edge_threshold_manual / pixel_size
+    edge_threshold_um = edge_threshold_manual
+
+    return edge_threshold_pixels, edge_threshold_um
+
+def edgeThresholdMain(edge_threshold_manual, pixel_size, square_size):
+
+    if edge_threshold_manual == False:
+        edge_threshold_pixels, edge_threshold_um = edgeThresholdAutomatic(square_size, pixel_size)
+    else:
+        edge_threshold_pixels, edge_threshold_um = edgeThresholdManual(edge_threshold_manual, pixel_size)
 
     return edge_threshold_pixels, edge_threshold_um
 
@@ -66,7 +82,7 @@ def getTooCloseObjectsRandom(objects_df, radius_threshold=0):
     return close_objects_mask
 
 
-def getTooCloseObjectsMain(neurons_df, closeness_threshold, pixel_size):
+def getTooCloseObjectsMain(neurons_df, closeness_threshold, closeness_method, pixel_size):
     if closeness_threshold > 0:
         radius_threshold = closeness_threshold / pixel_size
 
@@ -74,9 +90,15 @@ def getTooCloseObjectsMain(neurons_df, closeness_threshold, pixel_size):
         mask_to_process = neurons_df["objects_edges"] == False
         subset_df = neurons_df[mask_to_process]
 
-        close_objects_mask = getTooCloseObjectsDeterministic(
-            subset_df, radius_threshold=radius_threshold
-        )
+        if closeness_method == "random":
+
+            close_objects_mask = getTooCloseObjectsRandom(
+                subset_df, radius_threshold=radius_threshold)
+
+        if closeness_method == 'deterministic':
+
+            close_objects_mask = getTooCloseObjectsDeterministic(
+                subset_df, radius_threshold=radius_threshold)
 
         # Assign only to the relevant subset, keep others as NaN
         neurons_df.loc[mask_to_process, "close_objects"] = close_objects_mask.astype(bool)
