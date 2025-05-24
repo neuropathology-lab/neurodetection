@@ -3,10 +3,11 @@ from matplotlib.patches import Rectangle
 plt.ioff()
 
 def threePlotsSave(org_img, img, objects_df, neurons_df, output_path_plots,
-                   square_size, pixel_size, edge_threshold_pixels, plot_type, max_dim=10):
+                   square_size, pixel_size, edge_threshold_pixels, plot_type, use_hematoxylin, max_dim=10):
 
-    img = img[:, :, ::-1]
     org_img = org_img[:, :, ::-1]
+    if not use_hematoxylin:
+        img = img[:, :, ::-1]
 
     tab10 = plt.get_cmap('tab10').colors
 
