@@ -1,13 +1,10 @@
 from pathlib import Path
 
-def validateInputs(input_dir, output_dir, use_hematoxylin, square_size, plot_max_dim, min_prob, save_detections, pixel_size,
-                    closeness_threshold, plot_results):
+def validateInputs(input_dir, output_dir, square_size, plot_max_dim, min_prob, save_detections, pixel_size,
+                     closeness_threshold, closeness_method, edge_threshold_manual, plot_results):
 
     if not type(input_dir) or not type(output_dir) is str:
         raise TypeError("Only strings in input and output are allowed")
-
-    if not type(use_hematoxylin) is bool:
-        raise TypeError("use_hematoxylin must be True or False")
 
     if not type(save_detections) is bool:
         raise TypeError("save_detections must be True or False")
@@ -17,6 +14,13 @@ def validateInputs(input_dir, output_dir, use_hematoxylin, square_size, plot_max
 
     if not isinstance(closeness_threshold, int) or closeness_threshold < 0:
         raise TypeError("closeness_threshold must be a non-negative integer.")
+
+    allowed_closeness_options = ("random", "deterministic")
+    if closeness_method not in allowed_closeness_options:
+        raise ValueError(f"closeness_method must be one of: {', '.join(allowed_closeness_options)}.")
+
+    if not isinstance(edge_threshold_manual, int) or edge_threshold_manual == False:
+        raise TypeError("edge_threshold_manual must be a non-negative integer or a False.")
 
     if not isinstance(square_size, (int, float)) or square_size <= 0:
         raise TypeError("square_size must be a positive number.")
