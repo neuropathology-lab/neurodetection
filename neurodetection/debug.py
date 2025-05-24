@@ -9,6 +9,5 @@ if __name__ == "__main__":
     detectNeurons(input_dir,
                   out_dir,
                   pixel_size,
-                  min_prob = 0.8,
-                  model_name = "learner_isneuron_hematoxylin",
-                  use_hematoxylin = True)
+                  plot_results = 'detailed',
+                  model_name = "isneuron_hematoxylin")
