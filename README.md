@@ -74,7 +74,7 @@ Example of `detailed` results plot:
 `simple` plotting will save only the last subplot. 
 
 ## Examples of parameter adjustments to improve neuron detection:
-![neurodetection_use_hematoxylin](https://github.com/user-attachments/assets/ffc6bec2-52f8-4b95-a5d5-3d185324fa28)
+![neurodetection_use_model](https://github.com/user-attachments/assets/625832ce-562b-4991-a5cc-3a9a7522bc12)
 ![neurodetection_closeness_threshold](https://github.com/user-attachments/assets/0d0f97d2-b488-4223-b911-49d695fd8f53)
 ![neurodetection_square_size](https://github.com/user-attachments/assets/a105040a-b196-4739-8a1d-5f13d3cf725b)
 *Changing the `square_size` will most likely require adjusting the `closeness_threshold` as well.
