@@ -19,7 +19,7 @@ def validateInputs(input_dir, output_dir, square_size, plot_max_dim, min_prob, s
     if closeness_method not in allowed_closeness_options:
         raise ValueError(f"closeness_method must be one of: {', '.join(allowed_closeness_options)}.")
 
-    if not isinstance(edge_threshold_manual, int) or edge_threshold_manual == False:
+    if not isinstance(edge_threshold_manual, int) or edge_threshold_manual != False:
         raise TypeError("edge_threshold_manual must be a non-negative integer or a False.")
 
     if not isinstance(square_size, (int, float)) or square_size <= 0:
