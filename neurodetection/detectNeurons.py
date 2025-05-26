@@ -22,6 +22,7 @@ from .classify_objects import classifyIsNeuron, changeSpecificity
 from .plot_output import threePlotsSave
 
 def detectNeurons(input_dir, output_dir, pixel_size,
+                  model_name = "isneuron_ptdp",
                   closeness_threshold = int(15),
                   closeness_method = "random",
                   edge_threshold_manual = int(10),
@@ -30,8 +31,7 @@ def detectNeurons(input_dir, output_dir, pixel_size,
                   plot_results = "simple",
                   plot_max_dim = int(10),
                   apply_blur = False,
-                  save_detections = False,
-                  model_name = "isneuron_ptdp"):
+                  save_detections = False):
 
     # Additional parameters (can be changed in case of a custom model)
     original_pixel_size     = 0.227 # Pixel size (in µm) of images used during model training; used as a rescaling factor
@@ -173,10 +173,10 @@ def detectNeurons(input_dir, output_dir, pixel_size,
             "edge_threshold_um": edge_threshold_um,
             "closeness_threshold_um": closeness_threshold,
             "closeness_method": closeness_method,
-            "use_hematoxylin": use_hematoxylin,
             "model": model_name,
+            "date": datetime.datetime.now().strftime('%Y-%m-%d'),
+            "use_hematoxylin": use_hematoxylin,
             "apply_blur": apply_blur,
-            "date" : datetime.datetime.now().strftime('%Y-%m-%d'),
             "minimum_probability": min_prob,
             "no_detected_objects": len(objects_df),
             "no_neurons": len(neurons_df),
@@ -211,8 +211,23 @@ def detectNeurons_cli():
     parser.add_argument('pixel_size', type=float, required=True,
                         help="Physical size of one image pixel in micrometers (μm). Pixel width and height must be equal.")
 
+    parser.add_argument('--model_name', type=str, default="isneuron_ptdp",
+                        help="Name of the trained model file used for neuron classification (expects a .pkl file). "
+                             "This setting determines the preprocessing applied to the image. "
+                             "isneuron_ptdp: Trained on pTDP-43 (409/410) DAB-stained images with hematoxylin counterstaining. Performs neuron classification on the original images. "
+                             "isneuron_hematoxylin: Trained on the hematoxylin channel only. Converts input images to hematoxylin and detects neurons on the transformed image.")
+
     parser.add_argument('--closeness_threshold', type=int, default=15,
                         help="Minimum separation distance (in μm) between detected objects. Objects closer than this are filtered to retain only one. Set to 0 to disable.")
+
+    parser.add_argument('--closeness_method', type=str, default='random', choices=['random', 'deterministic'],
+                        help=("Method for removing neurons that are too close to each other. "
+                              "'random' removes all but one neuron within a specified distance, selecting which to keep at random. "
+                              "'deterministic' uses DBSCAN to group nearby objects and deterministically retains only one object per group"))
+
+    parser.add_argument('--edge_threshold_manual', type=float, default=10,
+                        help="The distance (in μm) from the edge of the image within which detected neurons will be removed. "
+                             "Set to 'False' to disable this and use the automatic value, calculated as half the length of the square used for classification.")
 
     parser.add_argument('--square_size', type=float, default=22.7,
                         help="Side length (in μm) of the square region centered on each centroid, used for classification. Adjust this value to match the approximate diameter of a neuron.")
@@ -221,7 +236,7 @@ def detectNeurons_cli():
                         help="Minimum probability threshold for considering an object a neuron. Increase to improve specificity; decrease to improve sensitivity.")
 
     parser.add_argument('--apply_blur', action='store_true', default=False,
-                        help="If set, adds median blur with k size 5. Use it when having high contrast .")
+                        help="If set, adds median blur with k size 5. Use it when having high contrast.")
 
     parser.add_argument('--plot_results', type=str, default='detailed', choices=['none', 'simple', 'detailed'],
                         help=("Choose the level of result visualization to save: "
@@ -236,8 +251,6 @@ def detectNeurons_cli():
     parser.add_argument('--save_detections', action='store_true', default=False,
                         help="If set, saves a CSV file containing the coordinates of detected neurons.")
 
-    parser.add_argument('--model_name', type=str, default="learner_isneuron_ptdp_vessels",
-                        help="Base name of the trained model file used for neuron classification (expects a .pkl file).")
 
 if __name__ == '__detectNeurons__':
     detectNeurons_cli()
