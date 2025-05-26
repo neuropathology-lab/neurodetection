@@ -22,3 +22,4 @@ neurodetection/__pycache__/classify_objects.cpython-312.pyc
 neurodetection/__pycache__/__init__.cpython-312.pyc
 .idea/workspace.xml
 *.xml
+*.pyc
