@@ -26,10 +26,13 @@ detectNeurons(input_dir, output_dir, pixel_size)
 ```
 
 ## Parameters detectNeurons
-* **`input_dir`** Path to the input directory containing the images (.tif) for analysis. (required)
-* **`output_dir`** Path to the output directory where results will be saved. (required)
+# Required:
+* **`input_dir`** Path to the input directory containing the images (.tif) for analysis.
+* **`output_dir`** Path to the output directory where results will be saved.
 This script generates three types of results, each stored in separate subfolders: A CSV file containing summary information about the analysis, including the number of detected objects and neurons (always generated). A PNG plot visualizing the results (enabled by default). A CSV file with the centroids of detected neurons (disabled by default).
-* **`pixel_size`** Physical size of one image pixel in micrometers (in μm). Pixel width and height must be equal. (required)
+* **`pixel_size`** Physical size of one image pixel in micrometers (in μm). Pixel width and height must be equal.
+
+# Optional:
 * **`model_name`** Name of the trained model file used for neuron classification (expects a .pkl file). This setting determines the preprocessing applied to the image. `isneuron_ptdp`: Trained on pTDP-43 (409/410) DAB-stained images with hematoxylin counterstaining. Performs neuron classification on the original images. `isneuron_hematoxylin`: Trained on the hematoxylin channel only. Converts input images to hematoxylin and detects neurons on the transformed image. (default: `isneuron_ptdp`)
 * **`closeness_threshold`** Minimum separation distance (in μm) between detected neurons. If objects are closer than this threshold, only one will be retained. Set to 0 to disable. (default: 15)
 * **`closeness_method`** Method for removing neurons that are too close to each other. `random` removes all but one neuron within a specified distance, selecting which to keep at random. `deterministic` uses DBSCAN to group nearby objects and deterministically retains only one object per group. (default: `random`)
