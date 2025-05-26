@@ -45,8 +45,8 @@ def getObjectsEdges(objects_df, img, edge_threshold_pixels):
 
 def getTooCloseObjectsDeterministic(objects_df, radius_threshold=0):
     """
-    Returns a boolean mask for objects that are too close to others,
-    keeping only one per cluster. Deterministic.
+    This code fragment performs spatial deduplication of objects based on proximity using DBSCAN clustering.
+    Deterministic.
     """
     coords = objects_df[["center_col", "center_row"]].to_numpy()
 
@@ -67,8 +67,10 @@ def getTooCloseObjectsDeterministic(objects_df, radius_threshold=0):
     return close_objects_mask
 
 def getTooCloseObjectsRandom(objects_df, radius_threshold=0):
-    # Old versions - deprecated
-
+    """
+    Returns a boolean mask indicating which objects should be removed to avoid spatial overlap.
+    For each pair of objects closer than radius_threshold, one is randomly marked for removal.
+    """
     objects_tree = KDTree(objects_df[["center_col", "center_row"]])
     objects_close_pairs = objects_tree.query_pairs(radius_threshold)
     objects_to_remove = set()
