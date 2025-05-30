@@ -1,4 +1,9 @@
 def getScaling(original_pixel_size, pixel_size, original_square_size, square_size):
+    """
+    This function calculates a total scaling factor that adjusts for
+    differences in both image resolution and classification square size
+    between the training and target images.
+    """
 
     # Get scaling factor based on image magnification
     scaling_factor_pixel = original_pixel_size / pixel_size
