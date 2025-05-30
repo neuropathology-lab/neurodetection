@@ -99,4 +99,4 @@ This project is licensed under the BSD 3-Clause License.
 You are free to use, modify, and distribute this software, provided that the original copyright and license terms are retained.
 
 ## Citation
-Please cite the following article when using this package in a scientific publication: ADD LINK
+Please cite the following article when using this package in a scientific publication: TBD
