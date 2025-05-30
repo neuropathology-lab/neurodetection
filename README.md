@@ -41,7 +41,6 @@ This script generates three types of results, each stored in separate subfolders
 * **`min_prob`** Minimum probability threshold for considering an object a neuron. Increase to improve specificity. (default: 0.5)
 * **`plot_results`**  Choose the level of result visualization to save: `none` disables plotting, `simple` saves a single image with the original data and final classified neurons overlaid, and `detailed` saves a figure with four subplots: "the original image, the image with detected objects, all detected neurons, and the final classified neurons. (default: `detailed`)
 * **`plot_max_dim`** Maximum dimension (in inches) of the output plot. Increase this value to generate higher-resolution images. Takes only integers. (default: 10)
-* **`apply_blur`**  Apply a median blur with kernel size k = 5 to the image. Useful for reducing graininess. (default: False)
 * **`save_detections`** If set, saves a CSV file containing the coordinates of detected neurons. (default: False)
 
 ## Information in the results .csv
@@ -55,7 +54,6 @@ This script generates three types of results, each stored in separate subfolders
 `model`: Name of the classification model used.
 `date`: Date and time of processing.
 `use_hematoxylin`: Was the hematoxylin channel extracted from the image for neuron detection?
-`apply_blur`: Was a blur applied to the image?
 `minimum_probability`: Minimum probability required for an object to be considered a neuron.
 `no_detected_objects`: Total number of detected objects in the image.
 `no_neurons`: Number of detected neurons in the image after cleaning.
