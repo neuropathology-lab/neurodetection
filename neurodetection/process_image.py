@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 22 10:22:16 2024
-
-@author: u0146458
-"""
 from skimage.color import rgb2hed, hed2rgb
 import numpy as np
 import cv2
@@ -19,18 +13,8 @@ def separateHematoxylin(img):
 
     return img_h
 
-def applyBlur(img, method = 'median', k=5):
-    if method == 'median':
-        img = cv2.medianBlur(img, k)
-    if method == "gaussian":
-        img = cv2.GaussianBlur(img, (k, k), 0)
 
-    return img
-
-def processImageMain(img, use_hematoxylin, apply_blur):
-
-    if apply_blur:
-        img = applyBlur(img, 'median')
+def processImageMain(img, use_hematoxylin):
 
     if use_hematoxylin:
         # Separate stains and get only hematoxylin channel
