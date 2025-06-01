@@ -1,11 +1,4 @@
 *.xml
-*.xml
-*.pyc
-.idea/misc.xml
-.idea/neurodetection_pkg.iml
-.idea/workspace.xml
-.idea/workspace.xml
-*.xml
 *.pyc
 /.idea
 /neurodetection/__pycache__
