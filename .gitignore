@@ -25,3 +25,4 @@ neurodetection/__pycache__/__init__.cpython-312.pyc
 *.pyc
 /.idea
 /neurodetection/__pycache__
+neurodetection/debug.py
