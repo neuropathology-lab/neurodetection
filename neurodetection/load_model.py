@@ -25,7 +25,7 @@ def loadIsNeuron(model_name):
 
     # Load the model
     with warnings.catch_warnings():
-	warnings.simplefilter("ignore")
-	model = load_learner(model_path)
+	    warnings.simplefilter("ignore")
+	    model = load_learner(model_path)
 
     return model
