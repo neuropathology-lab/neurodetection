@@ -1,6 +1,7 @@
 import pathlib
 import platform
 from fastai.vision.all import load_learner
+import warnings
 
 # Detect operating system platform
 platf = platform.system()
@@ -23,6 +24,8 @@ def loadIsNeuron(model_name):
     model_path = this_file.parent / "models" / model_name
 
     # Load the model
-    model = load_learner(model_path)
+    with warnings.catch_warnings():
+	warnings.simplefilter("ignore")
+	model = load_learner(model_path)
 
     return model
