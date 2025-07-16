@@ -99,4 +99,4 @@ This project is licensed under the BSD 3-Clause License.
 You are free to use, modify, and distribute this software, provided that the original copyright and license terms are retained.
 
 ## Citation
-Please cite the following article when using this package in a scientific publication: TBD
+Please cite the following article when using this package in a scientific publication: Gawor K, Verrept S, Arekatla G, et al. Alzheimer's disease and its co-pathologies: Implications for hippocampal degeneration, cognitive decline, and the role of APOE ε4. Alzheimer's Dement. 2025; 21:e70483. https://doi.org/10.1002/alz.70483
