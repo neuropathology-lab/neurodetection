@@ -1,8 +1,6 @@
 import numpy as np
-from skimage.measure import label
 from skimage.color import rgb2gray
-from skimage.filters import threshold_otsu, threshold_local
-from scipy.ndimage import binary_fill_holes
+from skimage.filters import threshold_local
 import pandas as pd
 
 def detectObjectsWithDbscan(img, sigma, pixel_density, block_size=51):
