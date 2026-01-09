@@ -1,7 +1,5 @@
 import numpy as np
 import cv2
-import math
-import sys
 
 def getPatch(arr, idx, radius=3, fill=None):
     """
